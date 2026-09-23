@@ -10,7 +10,7 @@ import './ByomkeshPanel.css';
 
 import api from '../../services/api';
 
-export default function ByomkeshPanel() {
+export default function ByomkeshPanel({ onClose }) {
   const { activeCaseId, activeCase, openTab, setSelectedEntity, canvasNodes } = useWorkspace();
   const [mode, setMode] = useState('ASSIST'); // 'ASSIST' | 'RESEARCH' | 'REVIEW'
 
@@ -104,11 +104,18 @@ export default function ByomkeshPanel() {
       {/* Panel Top Mode Header */}
       <div className="byomkesh-panel-header">
         <div className="byomkesh-title-row">
-          <Brain size={15} className="byomkesh-logo-icon" />
-          <span className="byomkesh-title">BYOMKESH AI ENGINE</span>
-          <span className={`engine-status-pill status-${autoStatus.toLowerCase()}`}>
-            {autoStatus}
-          </span>
+          <div className="byomkesh-title-left">
+            <Brain size={15} className="byomkesh-logo-icon" />
+            <span className="byomkesh-title">BYOMKESH AI ENGINE</span>
+            <span className={`engine-status-pill status-${autoStatus.toLowerCase()}`}>
+              {autoStatus}
+            </span>
+          </div>
+          {onClose && (
+            <button className="byomkesh-close-btn" onClick={onClose} title="Close Byomkesh AI Panel">
+              <X size={14} />
+            </button>
+          )}
         </div>
 
         {/* 3 Modes Switcher: ASSIST | RESEARCH | REVIEW */}

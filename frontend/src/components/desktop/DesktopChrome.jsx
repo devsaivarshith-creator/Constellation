@@ -6,7 +6,8 @@ import {
   Search, Bell, Shield, Activity, GitBranch,
   CheckCircle2, Clock, ChevronRight, X, AlertTriangle,
   Radio, Check, Trash2, ArrowUpRight, Database,
-  Home, Network, Folder, Globe, Cpu, Scale, Settings
+  Home, Network, Folder, Globe, Cpu, Scale, Settings,
+  UploadCloud, Brain, GitCompare, UserCheck, Sparkles, Key, ExternalLink
 } from 'lucide-react';
 import './DesktopChrome.css';
 
@@ -22,13 +23,21 @@ export default function DesktopChrome({ children }) {
     markAllNotificationsRead,
     dismissNotification,
     setSelectedEntity,
-    canvasNodes
+    canvasNodes,
+    byomkeshOpen,
+    setByomkeshOpen,
+    dataUploaderOpen,
+    setDataUploaderOpen,
+    crossCaseOpen,
+    setCrossCaseOpen,
+    totalExplorerOpen,
+    setTotalExplorerOpen
   } = useWorkspace();
 
   const [utcTime, setUtcTime] = useState('');
   const [showSearchModal, setShowSearchModal] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
-  const [showTotalExplorer, setShowTotalExplorer] = useState(false);
+  const [showOfficerProfile, setShowOfficerProfile] = useState(false);
 
   // Live UTC Clock updater
   useEffect(() => {
@@ -51,14 +60,19 @@ export default function DesktopChrome({ children }) {
         e.preventDefault();
         setShowSearchModal(prev => !prev);
       }
+      if ((e.metaKey || e.ctrlKey) && e.key === 'b') {
+        e.preventDefault();
+        setByomkeshOpen(prev => !prev);
+      }
       if (e.key === 'Escape') {
         setShowSearchModal(false);
         setShowNotifications(false);
+        setShowOfficerProfile(false);
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
+  }, [setByomkeshOpen]);
 
   const unreadCount = (notifications || []).filter(n => !n.read).length;
 
@@ -73,92 +87,88 @@ export default function DesktopChrome({ children }) {
 
   return (
     <div className="desktop-window-container">
-      {/* ── TOP TITLEBAR CHROME (OpenAI Style Minimal Floating Panel) ── */}
-      <Panel3D className="desktop-titlebar-panel3d" glow="white" maxAngle={2}>
-        <header className="desktop-titlebar openai-minimal-titlebar">
-          {/* Left: OpenAI style minimal brand mark */}
-          <div className="titlebar-left">
-            <div className="brand-lockup-openai" onClick={() => setActiveNavSection('home')}>
-              <div className="brand-dot-emerald" />
-              <span className="brand-text-openai">CONSTELLATION</span>
-              <span className="brand-sub-openai font-mono">SEE PATTERNS. STOP CRIME.</span>
-            </div>
-          </div>
-
-          {/* Center: Top Navigation Switcher */}
-          <nav className="titlebar-nav-switcher">
-            <button
-              className={`nav-tab-btn ${activeNavSection === 'home' ? 'active' : ''}`}
-              onClick={() => setActiveNavSection('home')}
-            >
-              Dashboard
-            </button>
-            <button
-              className={`nav-tab-btn ${activeNavSection === 'workspace' ? 'active' : ''}`}
-              onClick={() => setActiveNavSection('workspace')}
-            >
-              Workspace
-            </button>
-            <button
-              className={`nav-tab-btn ${activeNavSection === 'intel' ? 'active' : ''}`}
-              onClick={() => setActiveNavSection('intel')}
-            >
-              Live Intel
-            </button>
-            <button
-              className={`nav-tab-btn ${activeNavSection === 'sweeps' ? 'active' : ''}`}
-              onClick={() => setActiveNavSection('sweeps')}
-            >
-              12h Sweeps
-            </button>
-            <button
-              className={`nav-tab-btn ${activeNavSection === 'audit' ? 'active' : ''}`}
-              onClick={() => setActiveNavSection('audit')}
-            >
-              Provenance
-            </button>
-          </nav>
-
-          {/* Right: Total File Explorer, Quick Search, Sweep Countdown, Notification Bell, Officer Profile */}
-          <div className="titlebar-right">
-            <button
-              className={`total-explorer-trigger-btn ${showTotalExplorer ? 'active' : ''}`}
-              onClick={() => setShowTotalExplorer(true)}
-              title="Open Windows File Explorer (All Cases & Cross-Case Repositories)"
-            >
-              <Database size={12} />
-              <span>TOTAL FILE EXPLORER</span>
-            </button>
-
-            <div className="titlebar-search-box" onClick={() => setShowSearchModal(true)}>
-              <Search size={13} className="search-ico" />
-              <span className="search-text-placeholder">Search intelligence...</span>
-              <kbd className="search-kbd">⌘K</kbd>
+      {/* ── TOP TITLEBAR CHROME (Floating OpenAI Style Minimal Panel) ── */}
+      <div className="floating-titlebar-wrapper">
+        <Panel3D className="desktop-titlebar-panel3d floating-titlebar-panel3d" glow="green" maxAngle={1.5}>
+          <header className="desktop-titlebar openai-minimal-titlebar">
+            {/* Left: OpenAI style minimal brand mark */}
+            <div className="titlebar-left">
+              <div className="brand-lockup-openai" onClick={() => setActiveNavSection('home')}>
+                <div className="brand-dot-emerald" />
+                <span className="brand-text-openai">CONSTELLATION</span>
+                <span className="brand-sub-openai font-mono">SEE PATTERNS. STOP CRIME.</span>
+              </div>
             </div>
 
-            <div className="sweep-countdown-indicator" title="Next Autonomous 12-Hour Sweep in 10 Hours">
-              <span className="sweep-dot" />
-              <span>Sweep: 10h</span>
-            </div>
+            {/* Center: Global Navigation Perspective Switcher */}
+            <nav className="titlebar-nav-switcher">
+              <button
+                className={`nav-tab-btn ${activeNavSection === 'home' ? 'active' : ''}`}
+                onClick={() => setActiveNavSection('home')}
+              >
+                Dashboard
+              </button>
+              <button
+                className={`nav-tab-btn ${activeNavSection === 'workspace' ? 'active' : ''}`}
+                onClick={() => setActiveNavSection('workspace')}
+              >
+                Workspace
+              </button>
+              <button
+                className={`nav-tab-btn ${activeNavSection === 'sweeps' ? 'active' : ''}`}
+                onClick={() => setActiveNavSection('sweeps')}
+              >
+                12h Sweeps
+              </button>
+              <button
+                className={`nav-tab-btn ${activeNavSection === 'intel' ? 'active' : ''}`}
+                onClick={() => setActiveNavSection('intel')}
+              >
+                Live Intel
+              </button>
+              <button
+                className={`nav-tab-btn ${activeNavSection === 'audit' ? 'active' : ''}`}
+                onClick={() => setActiveNavSection('audit')}
+              >
+                Provenance
+              </button>
+            </nav>
 
-            {/* Fully Functional Notification Bell */}
-            <button
-              className={`titlebar-icon-action ${showNotifications ? 'active' : ''}`}
-              title="Intelligence Alerts & Notifications"
-              onClick={() => setShowNotifications(prev => !prev)}
-            >
-              <Bell size={14} />
-              {unreadCount > 0 && <span className="notif-badge-pill">{unreadCount}</span>}
-            </button>
+            {/* Right: Active Case Pill, Quick Search, Sweep Countdown, Notification Bell */}
+            <div className="titlebar-right">
+              <div
+                className="titlebar-active-case-capsule font-mono"
+                onClick={() => setActiveNavSection('workspace')}
+                title="Active Investigation Context"
+              >
+                <GitBranch size={11} className="text-green" />
+                <span>case/{activeCase.id}</span>
+              </div>
 
-            <div className="officer-profile-capsule" title="Special Agent (Clearance: TOP SECRET // SPECIAL INTELLIGENCE)">
-              <Shield size={13} className="officer-badge-icon" />
-              <span className="officer-name">Lead Officer</span>
-              <span className="clearance-tag">TS-SCI</span>
+              <div className="titlebar-search-box" onClick={() => setShowSearchModal(true)}>
+                <Search size={13} className="search-ico" />
+                <span className="search-text-placeholder">Search intelligence...</span>
+                <kbd className="search-kbd">⌘K</kbd>
+              </div>
+
+              <div className="sweep-countdown-indicator" title="Next Autonomous 12-Hour Sweep in 10 Hours">
+                <span className="sweep-dot" />
+                <span>Sweep: 10h</span>
+              </div>
+
+              {/* Fully Functional Notification Bell */}
+              <button
+                className={`titlebar-icon-action ${showNotifications ? 'active' : ''}`}
+                title="Intelligence Alerts & Notifications"
+                onClick={() => setShowNotifications(prev => !prev)}
+              >
+                <Bell size={14} />
+                {unreadCount > 0 && <span className="notif-badge-pill">{unreadCount}</span>}
+              </button>
             </div>
-          </div>
-        </header>
-      </Panel3D>
+          </header>
+        </Panel3D>
+      </div>
 
       {/* ── NOTIFICATION CENTER FLYOUT DROPDOWN ─────────────────── */}
       {showNotifications && (
@@ -222,68 +232,95 @@ export default function DesktopChrome({ children }) {
         </div>
       )}
 
-      {/* ── DESKTOP MAIN VIEWPORT WITH LEFT ICON RAIL ─────────── */}
+      {/* ── DESKTOP MAIN VIEWPORT WITH FLOATING LEFT TOOL RAIL ─── */}
       <div className="desktop-main-split">
-        {/* Left Navigation Icon Rail (as in screenshot) */}
-        <aside className="left-icon-rail-dock">
-          <div className="rail-group-top">
-            <button
-              className={`rail-btn ${activeNavSection === 'home' ? 'active' : ''}`}
-              onClick={() => setActiveNavSection('home')}
-              title="Global Intelligence Grid (Dashboard)"
-            >
-              <Home size={18} />
-            </button>
-            <button
-              className={`rail-btn ${activeNavSection === 'workspace' ? 'active' : ''}`}
-              onClick={() => setActiveNavSection('workspace')}
-              title="Investigation Workspace Canvas"
-            >
-              <Network size={18} />
-            </button>
-            <button
-              className={`rail-btn ${showTotalExplorer ? 'active' : ''}`}
-              onClick={() => setShowTotalExplorer(true)}
-              title="Total File Explorer"
-            >
-              <Folder size={18} />
-            </button>
-            <button
-              className={`rail-btn ${activeNavSection === 'intel' ? 'active' : ''}`}
-              onClick={() => setActiveNavSection('intel')}
-              title="Live Intelligence Feeds"
-            >
-              <Globe size={18} />
-            </button>
-            <button
-              className={`rail-btn ${activeNavSection === 'sweeps' ? 'active' : ''}`}
-              onClick={() => setActiveNavSection('sweeps')}
-              title="Byomkesh AI 12h Sweeps"
-            >
-              <Cpu size={18} />
-            </button>
-            <button
-              className={`rail-btn ${activeNavSection === 'audit' ? 'active' : ''}`}
-              onClick={() => setActiveNavSection('audit')}
-              title="Provenance & Audit Ledger"
-            >
-              <Scale size={18} />
-            </button>
-          </div>
+        {/* Floating Left Workspace Tools Rail */}
+        <div className="floating-rail-wrapper">
+          <Panel3D className="floating-rail-panel3d" glow="green" maxAngle={2}>
+            <aside className="left-icon-rail-dock">
+              {/* Workspace Tools Group */}
+              <div className="rail-group-top">
+                {/* 1. File Explorer (Windows 11 Explorer with Cases Done & Folders) */}
+                <button
+                  className={`rail-btn ${totalExplorerOpen ? 'active' : ''}`}
+                  onClick={() => setTotalExplorerOpen(true)}
+                  title="Total File Explorer (Windows 11 Case Files & Closed Convictions)"
+                >
+                  <Folder size={18} />
+                </button>
 
-          <div className="rail-group-bottom">
-            <button
-              className="rail-btn rail-btn-settings"
-              onClick={() => setShowSearchModal(true)}
-              title="Quick Search & Settings (⌘K)"
-            >
-              <Settings size={18} />
-            </button>
-          </div>
-        </aside>
+                {/* 2. Data Uploader (Add Suspects, Phone Logs, Evidentiary Documents) */}
+                <button
+                  className={`rail-btn ${dataUploaderOpen ? 'active' : ''}`}
+                  onClick={() => {
+                    setActiveNavSection('workspace');
+                    setDataUploaderOpen(prev => !prev);
+                  }}
+                  title="Data Uploader & Evidence Ingestion (Upload Phone Logs, BOLs, Suspect Dossiers)"
+                >
+                  <UploadCloud size={18} />
+                </button>
 
-        {/* Center Main Stage */}
-        <main className="desktop-workspace-canvas">
+                {/* 3. Byomkesh AI Co-Pilot Toggle */}
+                <button
+                  className={`rail-btn rail-btn-byomkesh ${byomkeshOpen ? 'active' : ''}`}
+                  onClick={() => {
+                    setActiveNavSection('workspace');
+                    setByomkeshOpen(prev => !prev);
+                  }}
+                  title="Byomkesh AI Co-Pilot (Autonomous Reasoning & Evidence Inferences) [⌘B]"
+                >
+                  <Brain size={18} />
+                </button>
+
+                {/* 4. Cross-Case Importer & Linker */}
+                <button
+                  className={`rail-btn ${crossCaseOpen ? 'active' : ''}`}
+                  onClick={() => {
+                    setActiveNavSection('workspace');
+                    setCrossCaseOpen(prev => !prev);
+                  }}
+                  title="Cross-Case Connections & Entity Correlation Tool"
+                >
+                  <GitCompare size={18} />
+                </button>
+
+                {/* 5. Global Intelligence Map / 3D Globe */}
+                <button
+                  className={`rail-btn ${activeNavSection === 'home' ? 'active' : ''}`}
+                  onClick={() => setActiveNavSection('home')}
+                  title="Global Intelligence Grid (3D Rotating Globe & Corridor Map)"
+                >
+                  <Globe size={18} />
+                </button>
+              </div>
+
+              {/* Bottom Group: Settings & Profile Icon */}
+              <div className="rail-group-bottom">
+                <button
+                  className="rail-btn rail-btn-settings"
+                  onClick={() => setShowSearchModal(true)}
+                  title="Global Search & Hotkey Command Palette (⌘K)"
+                >
+                  <Settings size={18} />
+                </button>
+
+                {/* Profile Icon at Bottom of Sidebar */}
+                <button
+                  className={`rail-btn rail-btn-profile ${showOfficerProfile ? 'active' : ''}`}
+                  onClick={() => setShowOfficerProfile(true)}
+                  title="Lead Officer Dossier & Security Clearance (TS-SCI)"
+                >
+                  <Shield size={18} />
+                  <span className="rail-profile-dot" />
+                </button>
+              </div>
+            </aside>
+          </Panel3D>
+        </div>
+
+        {/* Center Main Stage (Floating Canvas Container) */}
+        <main className="desktop-workspace-canvas floating-workspace-canvas">
           {children}
         </main>
       </div>
@@ -391,9 +428,66 @@ export default function DesktopChrome({ children }) {
 
       {/* ── TOTAL BUREAU FILE EXPLORER MODAL ────────────────────── */}
       <TotalFileExplorer
-        isOpen={showTotalExplorer}
-        onClose={() => setShowTotalExplorer(false)}
+        isOpen={totalExplorerOpen}
+        onClose={() => setTotalExplorerOpen(false)}
       />
+
+      {/* ── OFFICER PROFILE & CLEARANCE MODAL ───────────────────── */}
+      {showOfficerProfile && (
+        <div className="command-palette-backdrop" onClick={() => setShowOfficerProfile(false)}>
+          <div className="officer-profile-modal-panel" onClick={e => e.stopPropagation()}>
+            <div className="profile-modal-header">
+              <div className="profile-header-title">
+                <Shield size={18} className="text-emerald" />
+                <div>
+                  <h3 className="profile-modal-name">Special Agent Adithya Srivatsa</h3>
+                  <p className="profile-modal-sub font-mono">DIRECTORATE OF REVENUE INTELLIGENCE // LEAD INVESTIGATOR</p>
+                </div>
+              </div>
+              <button className="profile-close-btn" onClick={() => setShowOfficerProfile(false)}>
+                <X size={15} />
+              </button>
+            </div>
+
+            <div className="profile-modal-body">
+              <div className="profile-meta-grid font-mono">
+                <div className="profile-meta-item">
+                  <span className="profile-meta-label">CLEARANCE LEVEL</span>
+                  <span className="profile-meta-val badge-clearance">TOP SECRET // SCI (TK-G-HCS)</span>
+                </div>
+                <div className="profile-meta-item">
+                  <span className="profile-meta-label">ORGANIZATION</span>
+                  <span className="profile-meta-val">Hundred-Trillion Systems</span>
+                </div>
+                <div className="profile-meta-item">
+                  <span className="profile-meta-label">OPERATIONAL SECTOR</span>
+                  <span className="profile-meta-val">Western Seaboard Maritime Contraband & Hawala</span>
+                </div>
+                <div className="profile-meta-item">
+                  <span className="profile-meta-label">CRYPTOGRAPHIC IDENTITY</span>
+                  <span className="profile-meta-val text-green">0x71f8...442a (SEALED)</span>
+                </div>
+              </div>
+
+              <div className="profile-legal-box font-mono">
+                <div className="legal-box-title">STATUTORY INVESTIGATIVE AUTHORITY:</div>
+                <div className="legal-box-content">
+                  Empowered under Bharatiya Nyaya Sanhita (BNS) Sec 111 (Organized Crime Syndicates),
+                  Customs Act 1962 Sec 108 (Summons & Seizure), Prevention of Money Laundering Act (PMLA) Sec 5,
+                  and Information Technology Act Sec 69 (Decryption).
+                </div>
+              </div>
+
+              <div className="profile-modal-footer">
+                <span className="profile-session-clock font-mono">SESSION ACTIVE · {utcTime}</span>
+                <button className="profile-action-btn font-mono" onClick={() => setShowOfficerProfile(false)}>
+                  Dismiss Dossier
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

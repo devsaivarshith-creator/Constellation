@@ -428,6 +428,12 @@ export function WorkspaceProvider({ children }) {
   const [ropingSource, setRopingSource] = useState(null); // Node ID when dragging or clicking rope
   const [isRopingMode, setIsRopingMode] = useState(false);
 
+  // Tool panels open state
+  const [byomkeshOpen, setByomkeshOpen] = useState(true);
+  const [dataUploaderOpen, setDataUploaderOpen] = useState(false);
+  const [crossCaseOpen, setCrossCaseOpen] = useState(false);
+  const [totalExplorerOpen, setTotalExplorerOpen] = useState(false);
+
   // 3 Floating Windows State (positioning, minimization, maximize)
   const [windowsState, setWindowsState] = useState({
     canvas: { open: true, minimized: false, maximized: false, zIndex: 10, title: 'Investigation Board // Case 102' },
@@ -525,8 +531,8 @@ export function WorkspaceProvider({ children }) {
     // Smart cascading placement if coordinates not explicitly provided
     const defaultX = 80 + ((canvasNodes.length * 60) % 400);
     const defaultY = 70 + ((canvasNodes.length * 50) % 280);
-    const posX = x !== null ? x : defaultX;
-    const posY = y !== null ? y : defaultY;
+    const posX = typeof x === 'number' && Number.isFinite(x) ? Math.round(x) : defaultX;
+    const posY = typeof y === 'number' && Number.isFinite(y) ? Math.round(y) : defaultY;
 
     const existingIndex = canvasNodes.findIndex(n => 
       n.id === item.id || (item.name && n.name === item.name) || (item.title && n.name === item.title)
@@ -535,8 +541,8 @@ export function WorkspaceProvider({ children }) {
     if (existingIndex !== -1) {
       const existing = canvasNodes[existingIndex];
       // Move to target drop position or cascade position
-      const updatedX = x !== null ? posX : (existing.x || defaultX);
-      const updatedY = y !== null ? posY : (existing.y || defaultY);
+      const updatedX = typeof x === 'number' && Number.isFinite(x) ? posX : (Number.isFinite(existing.x) ? existing.x : defaultX);
+      const updatedY = typeof y === 'number' && Number.isFinite(y) ? posY : (Number.isFinite(existing.y) ? existing.y : defaultY);
       
       setCanvasNodes(prev => prev.map((n, idx) => 
         idx === existingIndex ? { ...n, x: updatedX, y: updatedY } : n
@@ -597,7 +603,9 @@ export function WorkspaceProvider({ children }) {
   };
 
   const updateNodePosition = (id, x, y) => {
-    setCanvasNodes(prev => prev.map(n => n.id === id ? { ...n, x, y } : n));
+    const validX = typeof x === 'number' && Number.isFinite(x) ? Math.round(x) : 80;
+    const validY = typeof y === 'number' && Number.isFinite(y) ? Math.round(y) : 80;
+    setCanvasNodes(prev => prev.map(n => n.id === id ? { ...n, x: validX, y: validY } : n));
   };
 
   const toggleWindow = (winKey) => {
@@ -693,7 +701,15 @@ export function WorkspaceProvider({ children }) {
       openWorkspace,
       closeWorkspace,
       createWorkspace,
-      deleteWorkspace
+      deleteWorkspace,
+      byomkeshOpen,
+      setByomkeshOpen,
+      dataUploaderOpen,
+      setDataUploaderOpen,
+      crossCaseOpen,
+      setCrossCaseOpen,
+      totalExplorerOpen,
+      setTotalExplorerOpen
     }}>
       {children}
     </WorkspaceContext.Provider>

@@ -322,6 +322,21 @@
   transition: stroke 0.2s ease;
 }
 
+.live-rubberband-group {
+  pointer-events: none;
+}
+
+.live-rope-pulse {
+  animation: live-dash 0.6s linear infinite;
+  filter: drop-shadow(0 0 10px rgba(16, 185, 129, 0.9));
+}
+
+@keyframes live-dash {
+  to {
+    stroke-dashoffset: -20;
+  }
+}
+
 .rope-curve-group:hover .rope-path {
   stroke-width: 2.5;
   stroke: #ffffff;

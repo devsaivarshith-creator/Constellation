@@ -34,6 +34,7 @@ export default function InvestigationCanvas() {
   const [isDragOver, setIsDragOver] = useState(false);
   const [draggingNode, setDraggingNode] = useState(null);
   const [toastMessage, setToastMessage] = useState(null);
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
 
   // Double-click / Double-tap spawn menu state
   const [doubleClickMenu, setDoubleClickMenu] = useState(null); // { x: number, y: number }
@@ -54,6 +55,35 @@ export default function InvestigationCanvas() {
 
   const draggingRef = useRef({ id: null, offsetX: 0, offsetY: 0 });
 
+  // Cancel roping on Escape key
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        if (ropingSource) {
+          setRopingSource(null);
+          triggerToast('Roping cancelled');
+        }
+        setDoubleClickMenu(null);
+        setShowConnectBar(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [ropingSource]);
+
+  // Complete roping connection between two nodes
+  const completeRoping = (targetNodeId) => {
+    if (!ropingSource || ropingSource === targetNodeId) {
+      setRopingSource(null);
+      return;
+    }
+    const srcNode = canvasNodes.find(n => n.id === ropingSource);
+    const dstNode = canvasNodes.find(n => n.id === targetNodeId);
+    addRopeConnection(ropingSource, targetNodeId, connectRel || 'COORDINATES_WITH');
+    triggerToast(`Linked ${srcNode?.name || 'Node'} ➔ ${dstNode?.name || 'Node'} (${connectRel || 'COORDINATES_WITH'})`);
+    setRopingSource(null);
+  };
+
   // Dragging node on canvas
   const handleNodeMouseDown = (e, node) => {
     if (e.target.closest('button') || e.target.closest('.card-rope-anchor')) return;
@@ -63,18 +93,16 @@ export default function InvestigationCanvas() {
 
     // If currently roping and clicked a different node, establish connection immediately
     if (ropingSource) {
-      if (ropingSource !== node.id) {
-        addRopeConnection(ropingSource, node.id, connectRel || 'COORDINATES_WITH');
-        triggerToast(`Linked ${canvasNodes.find(n => n.id === ropingSource)?.name} ➔ ${node.name} (${connectRel || 'COORDINATES_WITH'})`);
-        setRopingSource(null);
-      }
+      completeRoping(node.id);
       return;
     }
 
     if (!canvasRef.current) return;
     const rect = canvasRef.current.getBoundingClientRect();
-    const offsetX = e.clientX - rect.left - (node.x || 50);
-    const offsetY = e.clientY - rect.top - (node.y || 50);
+    const curX = Number.isFinite(node.x) ? node.x : 80;
+    const curY = Number.isFinite(node.y) ? node.y : 80;
+    const offsetX = e.clientX - rect.left - curX;
+    const offsetY = e.clientY - rect.top - curY;
 
     draggingRef.current = { id: node.id, offsetX, offsetY };
     setDraggingNode(node.id);
@@ -82,6 +110,14 @@ export default function InvestigationCanvas() {
 
   useEffect(() => {
     const handleMouseMove = (e) => {
+      if (canvasRef.current) {
+        const rect = canvasRef.current.getBoundingClientRect();
+        setMousePos({
+          x: Math.round(e.clientX - rect.left),
+          y: Math.round(e.clientY - rect.top)
+        });
+      }
+
       const { id, offsetX, offsetY } = draggingRef.current;
       if (!id || !canvasRef.current) return;
       const rect = canvasRef.current.getBoundingClientRect();
@@ -149,12 +185,16 @@ export default function InvestigationCanvas() {
 
   const startRopingFrom = (e, nodeId) => {
     e.stopPropagation();
-    if (ropingSource === nodeId) {
-      setRopingSource(null);
+    if (ropingSource) {
+      if (ropingSource !== nodeId) {
+        completeRoping(nodeId);
+      } else {
+        setRopingSource(null);
+      }
     } else {
       setRopingSource(nodeId);
       const srcNode = canvasNodes.find(n => n.id === nodeId);
-      triggerToast(`Roping from ${srcNode?.name || 'entity'}. Click any destination card to complete link.`);
+      triggerToast(`Roping from ${srcNode?.name || 'entity'}. Click any destination card or anchor to complete link.`);
     }
   };
 
@@ -552,23 +592,70 @@ export default function InvestigationCanvas() {
 
         {/* ── SVG Bezier Ropes Layer ────────────────────────────── */}
         <svg className="canvas-ropes-svg">
+          {/* Active Live Rubber-Band Line when Roping */}
+          {ropingSource && (() => {
+            const src = canvasNodes.find(n => n.id === ropingSource);
+            if (!src) return null;
+            const sx = Number.isFinite(src.x) ? src.x : 80;
+            const sy = Number.isFinite(src.y) ? src.y : 80;
+            const tx = Number.isFinite(mousePos.x) && mousePos.x > 0 ? mousePos.x : (sx + 160);
+            const ty = Number.isFinite(mousePos.y) && mousePos.y > 0 ? mousePos.y : (sy + 60);
+
+            // Connect from right port if mouse is to the right, left port otherwise
+            const x1 = tx >= sx + 110 ? sx + 220 : sx;
+            const y1 = sy + 55;
+            const x2 = tx;
+            const y2 = ty;
+            const dx = x2 - x1;
+            const dy = y2 - y1;
+            const cx1 = x1 + dx * 0.5;
+            const cy1 = y1 - 20;
+            const cx2 = x1 + dx * 0.5;
+            const cy2 = y2 + 20;
+
+            return (
+              <g className="live-rubberband-group">
+                <path
+                  d={`M ${x1} ${y1} C ${cx1} ${cy1}, ${cx2} ${cy2}, ${x2} ${y2}`}
+                  stroke="rgba(16, 185, 129, 0.3)"
+                  strokeWidth="8"
+                  fill="none"
+                />
+                <path
+                  d={`M ${x1} ${y1} C ${cx1} ${cy1}, ${cx2} ${cy2}, ${x2} ${y2}`}
+                  stroke="#10b981"
+                  strokeWidth="2.5"
+                  strokeDasharray="6, 4"
+                  fill="none"
+                  className="live-rope-pulse"
+                />
+                <circle cx={x2} cy={y2} r="5" fill="#10b981" stroke="#ffffff" strokeWidth="2" />
+              </g>
+            );
+          })()}
+
+          {/* Established Canvas Edges */}
           {canvasEdges.map(edge => {
             const src = canvasNodes.find(n => n.id === edge.source);
             const dst = canvasNodes.find(n => n.id === edge.target);
             if (!src || !dst) return null;
 
-            // Anchor centers
-            const x1 = (src.x || 80) + 110;
-            const y1 = (src.y || 80) + 55;
-            const x2 = (dst.x || 400) + 110;
-            const y2 = (dst.y || 200) + 55;
+            const sx = Number.isFinite(src.x) ? src.x : 80;
+            const sy = Number.isFinite(src.y) ? src.y : 80;
+            const dx = Number.isFinite(dst.x) ? dst.x : 400;
+            const dy = Number.isFinite(dst.y) ? dst.y : 200;
+
+            // Connect from right port of left card to left port of right card
+            const x1 = dx >= sx ? sx + 220 : sx;
+            const y1 = sy + 55;
+            const x2 = dx >= sx ? dx : dx + 220;
+            const y2 = dy + 55;
 
             // Curvature control points
-            const dx = x2 - x1;
-            const dy = y2 - y1;
-            const cx1 = x1 + dx * 0.5;
+            const dist = x2 - x1;
+            const cx1 = x1 + dist * 0.5;
             const cy1 = y1 - 25;
-            const cx2 = x1 + dx * 0.5;
+            const cx2 = x1 + dist * 0.5;
             const cy2 = y2 + 25;
 
             const midX = (x1 + x2) / 2;
@@ -627,19 +714,20 @@ export default function InvestigationCanvas() {
           const isRopingSelf = ropingSource === node.id;
           const isFlashed = flashNodeId === node.id;
 
+          const renderX = Number.isFinite(node.x) ? node.x : 80;
+          const renderY = Number.isFinite(node.y) ? node.y : 80;
+
           return (
             <div
               key={node.id}
               className={`canvas-entity-card ${isSelected ? 'selected' : ''} ${isRopingSelf ? 'roping-source-node' : ''} ${isRopingTarget ? 'roping-target-candidate' : ''} ${isFlashed ? 'flash-highlight' : ''}`}
               style={{
-                transform: `translate3d(${node.x || 80}px, ${node.y || 80}px, 0)`
+                transform: `translate3d(${renderX}px, ${renderY}px, 0)`
               }}
               onMouseDown={(e) => handleNodeMouseDown(e, node)}
               onClick={() => {
                 if (ropingSource && ropingSource !== node.id) {
-                  addRopeConnection(ropingSource, node.id, connectRel || 'COORDINATES_WITH');
-                  triggerToast(`Connected ${canvasNodes.find(n => n.id === ropingSource)?.name} ➔ ${node.name} (${connectRel || 'COORDINATES_WITH'})`);
-                  setRopingSource(null);
+                  completeRoping(node.id);
                 } else {
                   setSelectedEntity(node);
                 }
@@ -649,12 +737,12 @@ export default function InvestigationCanvas() {
               <div
                 className="card-rope-anchor anchor-left"
                 onClick={(e) => startRopingFrom(e, node.id)}
-                title="Click anchor to link"
+                title={ropingSource && ropingSource !== node.id ? "Click to connect link here" : "Click to rope from this node"}
               />
               <div
                 className="card-rope-anchor anchor-right"
                 onClick={(e) => startRopingFrom(e, node.id)}
-                title="Click anchor to link"
+                title={ropingSource && ropingSource !== node.id ? "Click to connect link here" : "Click to rope from this node"}
               />
 
               {/* Roping Target Hint */}

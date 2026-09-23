@@ -4,9 +4,11 @@ import WorkspaceOverviewHub from '../components/workspace/WorkspaceOverviewHub';
 import CaseFileAdder from '../components/workspace/CaseFileAdder';
 import InvestigationCanvas from '../components/workspace/InvestigationCanvas';
 import CrossCaseImporter from '../components/workspace/CrossCaseImporter';
+import ByomkeshPanel from '../components/desktop/ByomkeshPanel';
+import Panel3D from '../components/Panel3D';
 import {
   Layers, ArrowLeft, Plus, Database, Sidebar,
-  Activity, CheckCircle2, Shield, RefreshCw, X
+  Activity, CheckCircle2, Shield, RefreshCw, X, Brain, Sparkles
 } from 'lucide-react';
 import './InvestigationWorkspace.css';
 
@@ -15,11 +17,15 @@ export default function InvestigationWorkspace() {
     activeWorkspaceId,
     activeWorkspace,
     closeWorkspace,
-    activeCase
+    activeCase,
+    byomkeshOpen,
+    setByomkeshOpen,
+    dataUploaderOpen,
+    setDataUploaderOpen,
+    crossCaseOpen,
+    setCrossCaseOpen
   } = useWorkspace();
 
-  const [fileAdderOpen, setFileAdderOpen] = useState(true);
-  const [importerOpen, setImporterOpen] = useState(false);
   const [backendStatus, setBackendStatus] = useState('healthy');
 
   // Verify backend health
@@ -63,24 +69,34 @@ export default function InvestigationWorkspace() {
           </div>
         </div>
 
-        {/* Center / Right: File Adder & Importer Toggles */}
+        {/* Center / Right: File Adder, Cross-Case, & Byomkesh Toggles */}
         <div className="topbar-right-cluster">
           <button
-            className={`topbar-toggle-btn ${fileAdderOpen ? 'active' : ''}`}
-            onClick={() => setFileAdderOpen(prev => !prev)}
-            title="Toggle Case File & Entity Adder"
+            className={`topbar-toggle-btn ${dataUploaderOpen ? 'active' : ''}`}
+            onClick={() => setDataUploaderOpen(prev => !prev)}
+            title="Toggle Case File & Entity Data Uploader"
           >
             <Sidebar size={13} />
             <span>Case Files &amp; Entities</span>
           </button>
 
           <button
-            className={`topbar-toggle-btn ${importerOpen ? 'active' : ''}`}
-            onClick={() => setImporterOpen(prev => !prev)}
+            className={`topbar-toggle-btn ${crossCaseOpen ? 'active' : ''}`}
+            onClick={() => setCrossCaseOpen(prev => !prev)}
             title="Toggle Cross-Case File Importer"
           >
             <Database size={13} />
             <span>Cross-Case Importer</span>
+          </button>
+
+          <button
+            className={`topbar-toggle-btn btn-byomkesh ${byomkeshOpen ? 'active' : ''}`}
+            onClick={() => setByomkeshOpen(prev => !prev)}
+            title="Toggle Byomkesh AI Investigation Co-Pilot"
+          >
+            <Brain size={13} />
+            <span>Byomkesh AI</span>
+            <span className="byomkesh-pulse-sparkle">✦</span>
           </button>
 
           <div className="topbar-divider" />
@@ -97,9 +113,9 @@ export default function InvestigationWorkspace() {
 
       {/* ── Main Workspace Stage ──────────────────────────────────── */}
       <div className="workspace-main-stage">
-        {/* Left: Case File Adder */}
-        {fileAdderOpen && (
-          <CaseFileAdder onClose={() => setFileAdderOpen(false)} />
+        {/* Left: Case File & Data Uploader */}
+        {dataUploaderOpen && (
+          <CaseFileAdder onClose={() => setDataUploaderOpen(false)} />
         )}
 
         {/* Center: Full-Scale Investigation Canvas */}
@@ -108,9 +124,18 @@ export default function InvestigationWorkspace() {
         </main>
 
         {/* Right: Collapsible Cross-Case Importer */}
-        {importerOpen && (
+        {crossCaseOpen && (
           <aside className="workspace-importer-dock">
-            <CrossCaseImporter onClose={() => setImporterOpen(false)} />
+            <CrossCaseImporter onClose={() => setCrossCaseOpen(false)} />
+          </aside>
+        )}
+
+        {/* Far Right: Byomkesh AI Reasoning Engine Dock */}
+        {byomkeshOpen && (
+          <aside className="workspace-byomkesh-dock">
+            <Panel3D glow="green" maxAngle={2} className="byomkesh-dock-panel">
+              <ByomkeshPanel onClose={() => setByomkeshOpen(false)} />
+            </Panel3D>
           </aside>
         )}
       </div>

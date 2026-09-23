@@ -21,11 +21,23 @@
   z-index: 100;
 }
 
-/* ── OpenAI Style Minimal Titlebar ───────────────────────────── */
+/* ── Floating OpenAI Style Minimal Titlebar ───────────────────── */
+.floating-titlebar-wrapper {
+  padding: 10px 14px 0 14px;
+  flex-shrink: 0;
+  z-index: 100;
+}
+
+.floating-titlebar-panel3d {
+  border-radius: 12px !important;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.08) !important;
+}
+
 .openai-minimal-titlebar {
   height: 48px !important;
   background: #090c14 !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border: none !important;
   padding: 0 16px !important;
 }
 
@@ -66,26 +78,61 @@
   margin-left: 2px;
 }
 
-/* ── Main Split Container with Left Icon Rail Dock ────────────── */
+.titlebar-active-case-capsule {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 11px;
+  color: #a1a1aa;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.titlebar-active-case-capsule:hover {
+  border-color: rgba(16, 185, 129, 0.4);
+  color: #ffffff;
+  background: rgba(16, 185, 129, 0.08);
+}
+
+/* ── Main Split Container with Floating Left Tool Rail Dock ─── */
 .desktop-main-split {
   display: flex;
   flex: 1;
   min-height: 0;
   overflow: hidden;
   position: relative;
+  gap: 12px;
+  padding: 10px 14px 10px 14px;
+}
+
+.floating-rail-wrapper {
+  height: 100%;
+  flex-shrink: 0;
+  z-index: 50;
+}
+
+.floating-rail-panel3d {
+  height: 100%;
+  border-radius: 14px !important;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.08) !important;
 }
 
 .left-icon-rail-dock {
   width: 54px;
+  height: 100%;
   background: #080b12;
-  border-right: 1px solid rgba(255, 255, 255, 0.07);
+  border: none;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
-  padding: 14px 0;
+  padding: 16px 0;
   flex-shrink: 0;
-  z-index: 50;
 }
 
 .rail-group-top {
@@ -122,6 +169,44 @@
   box-shadow: 0 0 16px rgba(16, 185, 129, 0.35) !important;
 }
 
+.rail-btn-byomkesh {
+  color: #a78bfa !important;
+}
+
+.rail-btn-byomkesh:hover {
+  background: rgba(139, 92, 246, 0.18) !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 14px rgba(139, 92, 246, 0.4) !important;
+}
+
+.rail-btn-byomkesh.active {
+  background: rgba(139, 92, 246, 0.25) !important;
+  color: #c4b5fd !important;
+  border: 1px solid #8b5cf6 !important;
+  box-shadow: 0 0 16px rgba(139, 92, 246, 0.45) !important;
+}
+
+.rail-btn-profile {
+  position: relative;
+  color: #38bdf8;
+}
+
+.rail-btn-profile:hover {
+  background: rgba(56, 189, 248, 0.15);
+  color: #ffffff;
+}
+
+.rail-profile-dot {
+  position: absolute;
+  top: 7px;
+  right: 7px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 6px #10b981;
+}
+
 .rail-group-bottom {
   display: flex;
   flex-direction: column;
@@ -135,6 +220,15 @@
 
 .rail-btn-settings:hover {
   color: #e2e8f0;
+}
+
+.floating-workspace-canvas {
+  flex: 1;
+  min-height: 0;
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--bg-desktop);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.06);
 }
 
 .titlebar-left {
@@ -828,5 +922,144 @@
 @keyframes flyout-appear {
   from { opacity: 0; transform: translateY(-8px) scale(0.98); }
   to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ── Officer Profile Modal ───────────────────────────────────── */
+.officer-profile-modal-panel {
+  background: #090c14;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 14px;
+  width: 90%;
+  max-width: 580px;
+  padding: 24px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.95), 0 0 30px rgba(16, 185, 129, 0.15);
+  animation: modal-pop 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.profile-modal-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 16px;
+  margin-bottom: 18px;
+}
+
+.profile-header-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.profile-modal-name {
+  font-size: 16px;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0;
+}
+
+.profile-modal-sub {
+  font-size: 10px;
+  color: #64748b;
+  margin-top: 3px;
+  letter-spacing: 0.05em;
+}
+
+.profile-close-btn {
+  background: transparent;
+  border: none;
+  color: #88909e;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+}
+
+.profile-close-btn:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.profile-meta-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.profile-meta-item {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 6px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.profile-meta-label {
+  font-size: 9px;
+  color: #64748b;
+  letter-spacing: 0.08em;
+}
+
+.profile-meta-val {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #e2e8f0;
+}
+
+.profile-meta-val.badge-clearance {
+  color: #ef4444;
+  font-weight: 700;
+}
+
+.profile-legal-box {
+  background: rgba(16, 185, 129, 0.04);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  border-radius: 6px;
+  padding: 12px;
+  margin-bottom: 20px;
+}
+
+.legal-box-title {
+  font-size: 10px;
+  font-weight: 700;
+  color: #10b981;
+  margin-bottom: 4px;
+}
+
+.legal-box-content {
+  font-size: 10.5px;
+  line-height: 1.5;
+  color: #94a3b8;
+}
+
+.profile-modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 14px;
+}
+
+.profile-session-clock {
+  font-size: 10px;
+  color: #64748b;
+}
+
+.profile-action-btn {
+  background: #ffffff;
+  color: #000000;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+
+.profile-action-btn:hover {
+  opacity: 0.9;
 }
 

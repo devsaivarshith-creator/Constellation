@@ -1,6 +1,6 @@
 import { useWorkspace } from '../contexts/WorkspaceContext';
 import DesktopChrome from './desktop/DesktopChrome';
-import HomeFeedPage from '../pages/HomeFeedPage';
+import DashboardPage from '../pages/DashboardPage';
 import InvestigationWorkspace from '../pages/InvestigationWorkspace';
 import LiveIntelligencePage from '../pages/LiveIntelligencePage';
 import SweepDashboardPage from '../pages/SweepDashboardPage';
@@ -11,7 +11,7 @@ export default function Layout() {
 
   return (
     <DesktopChrome>
-      {activeNavSection === 'home' && <HomeFeedPage />}
+      {activeNavSection === 'home' && <DashboardPage />}
       {activeNavSection === 'workspace' && <InvestigationWorkspace />}
       {activeNavSection === 'intel' && <LiveIntelligencePage />}
       {activeNavSection === 'sweeps' && <SweepDashboardPage />}

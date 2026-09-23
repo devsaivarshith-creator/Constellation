@@ -1,14 +1,14 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { useWorkspace } from '../contexts/WorkspaceContext';
 import {
   ArrowRight, ExternalLink, RefreshCw, Box,
   Users, CreditCard, Globe as GlobeIcon, Cpu,
   ShieldAlert, Activity, CheckCircle, X, MapPin,
-  TrendingUp, Compass, FileText, AlertCircle
+  TrendingUp, Compass, FileText, AlertCircle, Sparkles,
+  Zap, ArrowUpRight, ShieldCheck, Check
 } from 'lucide-react';
 import Panel3D from '../components/Panel3D';
 import Globe3D from '../components/Globe3D';
-import api from '../services/api';
 import './DashboardPage.css';
 
 const INITIAL_ALERTS = [
@@ -20,7 +20,8 @@ const INITIAL_ALERTS = [
     type: 'red',
     details: 'Unregistered hawala transfer of ₹4.8 Crore flagged between Surat diamond export shell and Dubai logistics firm.',
     confidence: '94%',
-    priority: 'Critical'
+    priority: 'Critical',
+    caseId: 'case-102'
   },
   {
     id: 'alt-02',
@@ -30,7 +31,8 @@ const INITIAL_ALERTS = [
     type: 'amber',
     details: 'Automated ANPR camera match for vehicle MH-31-BK-9021 linked to courier network of Operation Black Tide.',
     confidence: '88%',
-    priority: 'High'
+    priority: 'High',
+    caseId: 'case-117'
   },
   {
     id: 'alt-03',
@@ -40,7 +42,8 @@ const INITIAL_ALERTS = [
     type: 'green',
     details: 'Encrypted VoIP cluster initiated across 8 disposable IMEI endpoints within a 400m radius of Jaipur industrial park.',
     confidence: '82%',
-    priority: 'Medium'
+    priority: 'Medium',
+    caseId: 'case-121'
   },
   {
     id: 'alt-04',
@@ -50,7 +53,8 @@ const INITIAL_ALERTS = [
     type: 'red',
     details: 'SWIFT wire transfer anomaly through Colombo intermediary to Singapore offshore account flagged by AML engine.',
     confidence: '96%',
-    priority: 'Critical'
+    priority: 'Critical',
+    caseId: 'case-117'
   },
   {
     id: 'alt-05',
@@ -60,13 +64,15 @@ const INITIAL_ALERTS = [
     type: 'cyan',
     details: 'Ministry of Corporate Affairs filing links 3 known front directors to newly incorporated logistics entity.',
     confidence: '79%',
-    priority: 'Informational'
+    priority: 'Informational',
+    caseId: 'case-102'
   },
 ];
 
 const ACTIVE_INVESTIGATIONS = [
   {
     id: 'case-black-tide',
+    targetCaseId: 'case-117',
     title: 'Operation Black Tide',
     subtitle: 'Narcotics • West Coast',
     severity: 'High',
@@ -76,6 +82,7 @@ const ACTIVE_INVESTIGATIONS = [
   },
   {
     id: 'case-red-sand',
+    targetCaseId: 'case-143',
     title: 'Red Sand Syndicate',
     subtitle: 'Human Trafficking • South India',
     severity: 'Medium',
@@ -85,26 +92,68 @@ const ACTIVE_INVESTIGATIONS = [
   },
   {
     id: 'case-eastern-shield',
-    title: 'Eastern Shield',
-    subtitle: 'Arms Smuggling • North East',
-    severity: 'Medium',
-    severityClass: 'badge-amber',
+    targetCaseId: 'case-102',
+    title: 'Silver Dune Nexus',
+    subtitle: 'Arms & Contraband • Gujarat Port',
+    severity: 'High',
+    severityClass: 'badge-red',
     iconBg: '#172554',
     iconColor: '#3b82f6'
   },
   {
     id: 'case-digital-hawala',
-    title: 'Digital Hawala',
-    subtitle: 'Financial Crime • Pan-India',
-    severity: 'Low',
-    severityClass: 'badge-green',
+    targetCaseId: 'case-168',
+    title: 'Darknet Thuraya Intercepts',
+    subtitle: 'Cyber & SIGINT • Metro Corridors',
+    severity: 'Critical',
+    severityClass: 'badge-red',
     iconBg: '#064e3b',
     iconColor: '#10b981'
   }
 ];
 
+const SWEEP_DISCOVERIES = [
+  {
+    id: 'swp-1',
+    badge: 'CRITICAL BREAKTHROUGH',
+    title: 'Byomkesh verified cross-case financial conduit linking Silver Dune to Operation Black Tide.',
+    desc: 'Offshore corporate filings and seized Dubai ledger records reveal Al-Barakah Logistics FZE funnels narcotics proceeds through forged Panamanian charter agreements into Surat diamond trading nodes and Hawala Account #88219.',
+    caseId: 'case-102',
+    targetCase: 'Case 102 ↔ Case 117',
+    confidence: '94% CORROBORATED',
+    volume: '₹14.8 Cr (14 Split Tranches)'
+  },
+  {
+    id: 'swp-2',
+    badge: 'LIVE SATELLITE OSINT',
+    title: 'Maritime AIS transponder shutdown detected off Saurashtra coast — MV Sagar Ratna dark run.',
+    desc: 'Automated satellite telemetry receiver logged unannounced transponder disconnect at 21:14 UTC. Acoustic hydrophone array picked up nocturnal lightering rendezvous with unflagged wooden dhow.',
+    caseId: 'case-102',
+    targetCase: 'Case 102 (Silver Dune)',
+    confidence: '1.4m Draft Change at Sea',
+    volume: 'Porbandar Coastal Creek'
+  },
+  {
+    id: 'swp-3',
+    badge: 'FORENSIC BALLISTICS',
+    title: 'Striation match on Dock 4 spent 9mm casing links hitman Vikram Jadhav to customs murder.',
+    desc: 'State Forensic Lab certified 99.4% breech face match between the weapon seized in Case 108 and the fatal bullet recovered from the customs informant murder scene.',
+    caseId: 'case-108',
+    targetCase: 'Case 108 (Waterfront Hit)',
+    confidence: '99.4% Striation Certainty',
+    volume: 'BNS Sec 103 / Arms Act'
+  }
+];
+
 export default function DashboardPage() {
-  const navigate = useNavigate();
+  const {
+    setActiveNavSection,
+    setActiveCaseId,
+    openWorkspace,
+    workspaces,
+    addNodeToCanvas
+  } = useWorkspace();
+
   const [selectedAlert, setSelectedAlert] = useState(null);
   const [selectedRegion, setSelectedRegion] = useState('India');
   const [showRegionSelect, setShowRegionSelect] = useState(false);
@@ -113,17 +162,42 @@ export default function DashboardPage() {
   // Trigger processing animation
   const handleRefreshAnalysis = () => {
     setIsProcessing(true);
-    setTimeout(() => setIsProcessing(false), 2000);
+    setTimeout(() => setIsProcessing(false), 1800);
+  };
+
+  const handleLaunchCase = (targetCaseId) => {
+    if (targetCaseId) {
+      setActiveCaseId(targetCaseId);
+      const matchingWs = (workspaces || []).find(w => w.caseId === targetCaseId);
+      if (matchingWs) openWorkspace(matchingWs.id);
+    }
+    setActiveNavSection('workspace');
+  };
+
+  const handleAttachAlertToWorkspace = (alert) => {
+    addNodeToCanvas({
+      id: `alert-${Date.now()}`,
+      name: alert.title,
+      type: 'Alert Signal',
+      role: `${alert.location} Anomaly`,
+      threat: alert.priority === 'Critical' ? 'CRITICAL' : 'HIGH',
+      provenance: 'OBSERVED_EVENT',
+      details: `${alert.details} (Confidence: ${alert.confidence})`
+    });
+    handleLaunchCase(alert.caseId || 'case-102');
+    setSelectedAlert(null);
   };
 
   return (
     <div className="grid-dashboard-root">
       {/* ── MAIN TWO-COLUMN DASHBOARD GRID ───────────────── */}
       <div className="dashboard-grid-layout">
+        
         {/* ══ LEFT 2/3 COLUMN: HERO + BOTTOM PANELS ════════ */}
         <div className="left-intelligence-column">
+          
           {/* 1. HERO PANEL: GLOBAL INTELLIGENCE GRID */}
-          <Panel3D className="hero-grid-panel" maxAngle={4} glow="green">
+          <Panel3D className="hero-grid-panel" maxAngle={3} glow="green">
             <div className="hero-content-split">
               {/* Left Side: Headline, Subtitle, CTA, Stats */}
               <div className="hero-text-block">
@@ -143,7 +217,7 @@ export default function DashboardPage() {
 
                 <button
                   className="hero-explore-btn"
-                  onClick={() => navigate('/cases')}
+                  onClick={() => setActiveNavSection('workspace')}
                 >
                   <span>Explore Network</span>
                   <ArrowRight size={16} />
@@ -171,8 +245,9 @@ export default function DashboardPage() {
 
           {/* 2. BOTTOM ROW: NETWORK OVERVIEW & AI ANALYSIS */}
           <div className="bottom-intelligence-row">
+            
             {/* Panel A: Network Overview */}
-            <Panel3D className="network-overview-panel" maxAngle={6} glow="green">
+            <Panel3D className="network-overview-panel" maxAngle={4} glow="green">
               <div className="panel-header-row">
                 <h3 className="panel-title">Network Overview</h3>
                 <div className="header-controls-group">
@@ -201,7 +276,11 @@ export default function DashboardPage() {
                       </div>
                     )}
                   </div>
-                  <button className="panel-action-btn" onClick={() => navigate('/cases')} title="Full Network">
+                  <button
+                    className="panel-action-btn"
+                    onClick={() => setActiveNavSection('workspace')}
+                    title="Open Full Network Workspace"
+                  >
                     <ExternalLink size={14} />
                   </button>
                 </div>
@@ -268,18 +347,23 @@ export default function DashboardPage() {
             </Panel3D>
 
             {/* Panel B: AI Analysis */}
-            <Panel3D className="ai-analysis-panel" maxAngle={6} glow="green">
+            <Panel3D className="ai-analysis-panel" maxAngle={4} glow="green">
               <div className="panel-header-row">
                 <h3 className="panel-title">AI Analysis</h3>
                 <div className="header-controls-group">
                   <button
                     className={`ai-processing-pill ${isProcessing ? 'is-spinning' : ''}`}
                     onClick={handleRefreshAnalysis}
+                    title="Refresh AI Analysis Models"
                   >
                     <RefreshCw size={12} className="spin-icon" />
                     <span>{isProcessing ? 'Analyzing...' : 'Processing'}</span>
                   </button>
-                  <button className="panel-action-btn" onClick={() => navigate('/byomkesh')} title="Byomkesh AI">
+                  <button
+                    className="panel-action-btn"
+                    onClick={() => setActiveNavSection('sweeps')}
+                    title="Open Byomkesh AI Sweeps"
+                  >
                     <ExternalLink size={14} />
                   </button>
                 </div>
@@ -340,16 +424,22 @@ export default function DashboardPage() {
                 </div>
               </div>
             </Panel3D>
+
           </div>
         </div>
 
         {/* ══ RIGHT 1/3 COLUMN: LIVE ALERTS & INVESTIGATIONS ═ */}
         <div className="right-feed-column">
+          
           {/* Panel 1: Live Alerts */}
-          <Panel3D className="live-alerts-panel" maxAngle={5} glow="green">
+          <Panel3D className="live-alerts-panel" maxAngle={4} glow="green">
             <div className="panel-header-row">
               <h3 className="panel-title">Live Alerts</h3>
-              <button className="panel-action-btn view-all-link" onClick={() => navigate('/cases')}>
+              <button
+                className="panel-action-btn view-all-link"
+                onClick={() => setActiveNavSection('intel')}
+                title="View All Intelligence Feeds"
+              >
                 <span>View all</span>
                 <ExternalLink size={13} />
               </button>
@@ -376,10 +466,14 @@ export default function DashboardPage() {
           </Panel3D>
 
           {/* Panel 2: Active Investigations */}
-          <Panel3D className="active-investigations-panel" maxAngle={5} glow="green">
+          <Panel3D className="active-investigations-panel" maxAngle={4} glow="green">
             <div className="panel-header-row">
               <h3 className="panel-title">Active Investigations</h3>
-              <button className="panel-action-btn view-all-link" onClick={() => navigate('/cases')}>
+              <button
+                className="panel-action-btn view-all-link"
+                onClick={() => setActiveNavSection('workspace')}
+                title="View All Workspaces"
+              >
                 <span>View all</span>
                 <ExternalLink size={13} />
               </button>
@@ -390,7 +484,7 @@ export default function DashboardPage() {
                 <div
                   key={inv.id}
                   className="investigation-item-card"
-                  onClick={() => navigate('/cases')}
+                  onClick={() => handleLaunchCase(inv.targetCaseId)}
                 >
                   <div
                     className="inv-icon-box"
@@ -411,15 +505,63 @@ export default function DashboardPage() {
               ))}
             </div>
 
-            {/* Bottom Brand Pill */}
+            {/* Bottom Status Pill */}
             <div className="powered-badge-container">
-              <div className="powered-pill">
+              <div className="powered-pill font-mono">
                 <span className="powered-sparkle">✦</span>
-                <span>Powered by Netlify</span>
+                <span>CONSTELLATION · GLOBAL GRID OPERATIONAL</span>
               </div>
             </div>
           </Panel3D>
+
         </div>
+      </div>
+
+      {/* ── 3. BELOW GRID: BYOMKESH 12H SWEEP DISCOVERIES & FINDINGS ── */}
+      <div className="dashboard-sweep-section">
+        <Panel3D className="sweep-discoveries-panel" maxAngle={2} glow="green">
+          <div className="sweep-header-row">
+            <div className="sweep-header-left">
+              <div className="sweep-tag font-mono">
+                <Sparkles size={13} className="text-green" />
+                <span>BYOMKESH 12-HOUR AUTONOMOUS SWEEPS</span>
+              </div>
+              <h3 className="sweep-heading">Cross-Case Pattern Discoveries &amp; Evidentiary Findings</h3>
+              <p className="sweep-sub">
+                Autonomous heuristic engine runs continuous scans across all seized phone logs, customs BOLs, and SWIFT transactions.
+              </p>
+            </div>
+            <button
+              className="btn btn-primary font-mono btn-sweep-deep"
+              onClick={() => setActiveNavSection('sweeps')}
+            >
+              <span>Explore 12H Sweeps</span>
+              <ArrowUpRight size={14} />
+            </button>
+          </div>
+
+          <div className="sweep-cards-grid">
+            {SWEEP_DISCOVERIES.map(disc => (
+              <div key={disc.id} className="sweep-card-item">
+                <div className="sweep-card-top">
+                  <span className="sweep-card-badge font-mono">{disc.badge}</span>
+                  <span className="sweep-card-tag font-mono">{disc.targetCase}</span>
+                </div>
+                <h4 className="sweep-card-title">{disc.title}</h4>
+                <p className="sweep-card-desc">{disc.desc}</p>
+                <div className="sweep-card-footer">
+                  <span className="sweep-metric font-mono">{disc.confidence}</span>
+                  <button
+                    className="sweep-launch-btn font-mono"
+                    onClick={() => handleLaunchCase(disc.caseId)}
+                  >
+                    Workspace →
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </Panel3D>
       </div>
 
       {/* ── ALERT DETAIL MODAL ─────────────────────────── */}
@@ -437,7 +579,7 @@ export default function DashboardPage() {
             </div>
 
             <div className="modal-body-content">
-              <div className="modal-meta-grid">
+              <div className="modal-meta-grid font-mono">
                 <div className="meta-cell">
                   <span className="cell-label">Location</span>
                   <span className="cell-val">
@@ -465,25 +607,22 @@ export default function DashboardPage() {
                 <p>{selectedAlert.details}</p>
               </div>
 
-              <div className="modal-action-buttons">
+              <div className="modal-action-buttons font-mono">
                 <button
                   className="btn-action-primary"
-                  onClick={() => {
-                    setSelectedAlert(null);
-                    navigate('/cases');
-                  }}
+                  onClick={() => handleAttachAlertToWorkspace(selectedAlert)}
                 >
-                  <span>Attach to Investigation</span>
+                  <span>Attach to Investigation Canvas</span>
                   <ArrowRight size={15} />
                 </button>
                 <button
                   className="btn-action-secondary"
                   onClick={() => {
                     setSelectedAlert(null);
-                    navigate('/byomkesh');
+                    setActiveNavSection('sweeps');
                   }}
                 >
-                  <span>Query with Byomkesh AI</span>
+                  <span>Query Byomkesh AI</span>
                 </button>
               </div>
             </div>

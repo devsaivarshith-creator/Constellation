@@ -5,7 +5,8 @@ import TotalFileExplorer from './TotalFileExplorer';
 import {
   Search, Bell, Shield, Activity, GitBranch,
   CheckCircle2, Clock, ChevronRight, X, AlertTriangle,
-  Radio, Check, Trash2, ArrowUpRight, Database
+  Radio, Check, Trash2, ArrowUpRight, Database,
+  Home, Network, Folder, Globe, Cpu, Scale, Settings
 } from 'lucide-react';
 import './DesktopChrome.css';
 
@@ -29,20 +30,24 @@ export default function DesktopChrome({ children }) {
   const [showNotifications, setShowNotifications] = useState(false);
   const [showTotalExplorer, setShowTotalExplorer] = useState(false);
 
+  // Live UTC Clock updater
   useEffect(() => {
     const updateTime = () => {
       const now = new Date();
-      setUtcTime(now.toISOString().slice(11, 19) + ' UTC');
+      const hours = String(now.getUTCHours()).padStart(2, '0');
+      const mins = String(now.getUTCMinutes()).padStart(2, '0');
+      const secs = String(now.getUTCSeconds()).padStart(2, '0');
+      setUtcTime(`${hours}:${mins}:${secs} UTC`);
     };
     updateTime();
     const interval = setInterval(updateTime, 1000);
     return () => clearInterval(interval);
   }, []);
 
-  // Keyboard shortcut Ctrl/Cmd + K
+  // Global Keyboard shortcuts: Cmd+K, Esc
   useEffect(() => {
     const handleKeyDown = (e) => {
-      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
         e.preventDefault();
         setShowSearchModal(prev => !prev);
       }
@@ -68,12 +73,16 @@ export default function DesktopChrome({ children }) {
 
   return (
     <div className="desktop-window-container">
-      {/* ── TOP TITLEBAR CHROME (3D Bending Floating Panel) ─────── */}
-      <Panel3D className="desktop-titlebar-panel3d" glow="white" maxAngle={3}>
-        <header className="desktop-titlebar">
-          {/* Left: Clean minimal indicator (Breadcrumb path removed as requested) */}
+      {/* ── TOP TITLEBAR CHROME (OpenAI Style Minimal Floating Panel) ── */}
+      <Panel3D className="desktop-titlebar-panel3d" glow="white" maxAngle={2}>
+        <header className="desktop-titlebar openai-minimal-titlebar">
+          {/* Left: OpenAI style minimal brand mark */}
           <div className="titlebar-left">
-            <div className="titlebar-status-dot-indicator" title="System Operational" />
+            <div className="brand-lockup-openai" onClick={() => setActiveNavSection('home')}>
+              <div className="brand-dot-emerald" />
+              <span className="brand-text-openai">CONSTELLATION</span>
+              <span className="brand-sub-openai font-mono">SEE PATTERNS. STOP CRIME.</span>
+            </div>
           </div>
 
           {/* Center: Top Navigation Switcher */}
@@ -82,31 +91,31 @@ export default function DesktopChrome({ children }) {
               className={`nav-tab-btn ${activeNavSection === 'home' ? 'active' : ''}`}
               onClick={() => setActiveNavSection('home')}
             >
-              HOME FEED
+              Dashboard
             </button>
             <button
               className={`nav-tab-btn ${activeNavSection === 'workspace' ? 'active' : ''}`}
               onClick={() => setActiveNavSection('workspace')}
             >
-              WORKSPACE
+              Workspace
             </button>
             <button
               className={`nav-tab-btn ${activeNavSection === 'intel' ? 'active' : ''}`}
               onClick={() => setActiveNavSection('intel')}
             >
-              LIVE INTEL
+              Live Intel
             </button>
             <button
               className={`nav-tab-btn ${activeNavSection === 'sweeps' ? 'active' : ''}`}
               onClick={() => setActiveNavSection('sweeps')}
             >
-              12H SWEEPS
+              12h Sweeps
             </button>
             <button
               className={`nav-tab-btn ${activeNavSection === 'audit' ? 'active' : ''}`}
               onClick={() => setActiveNavSection('audit')}
             >
-              PROVENANCE
+              Provenance
             </button>
           </nav>
 
@@ -115,7 +124,7 @@ export default function DesktopChrome({ children }) {
             <button
               className={`total-explorer-trigger-btn ${showTotalExplorer ? 'active' : ''}`}
               onClick={() => setShowTotalExplorer(true)}
-              title="Open Total Bureau File Explorer (All Cases & Cross-Case Repositories)"
+              title="Open Windows File Explorer (All Cases & Cross-Case Repositories)"
             >
               <Database size={12} />
               <span>TOTAL FILE EXPLORER</span>
@@ -213,10 +222,71 @@ export default function DesktopChrome({ children }) {
         </div>
       )}
 
-      {/* ── DESKTOP BODY VIEWPORT ──────────────────────────────── */}
-      <main className="desktop-workspace-canvas">
-        {children}
-      </main>
+      {/* ── DESKTOP MAIN VIEWPORT WITH LEFT ICON RAIL ─────────── */}
+      <div className="desktop-main-split">
+        {/* Left Navigation Icon Rail (as in screenshot) */}
+        <aside className="left-icon-rail-dock">
+          <div className="rail-group-top">
+            <button
+              className={`rail-btn ${activeNavSection === 'home' ? 'active' : ''}`}
+              onClick={() => setActiveNavSection('home')}
+              title="Global Intelligence Grid (Dashboard)"
+            >
+              <Home size={18} />
+            </button>
+            <button
+              className={`rail-btn ${activeNavSection === 'workspace' ? 'active' : ''}`}
+              onClick={() => setActiveNavSection('workspace')}
+              title="Investigation Workspace Canvas"
+            >
+              <Network size={18} />
+            </button>
+            <button
+              className={`rail-btn ${showTotalExplorer ? 'active' : ''}`}
+              onClick={() => setShowTotalExplorer(true)}
+              title="Total File Explorer"
+            >
+              <Folder size={18} />
+            </button>
+            <button
+              className={`rail-btn ${activeNavSection === 'intel' ? 'active' : ''}`}
+              onClick={() => setActiveNavSection('intel')}
+              title="Live Intelligence Feeds"
+            >
+              <Globe size={18} />
+            </button>
+            <button
+              className={`rail-btn ${activeNavSection === 'sweeps' ? 'active' : ''}`}
+              onClick={() => setActiveNavSection('sweeps')}
+              title="Byomkesh AI 12h Sweeps"
+            >
+              <Cpu size={18} />
+            </button>
+            <button
+              className={`rail-btn ${activeNavSection === 'audit' ? 'active' : ''}`}
+              onClick={() => setActiveNavSection('audit')}
+              title="Provenance & Audit Ledger"
+            >
+              <Scale size={18} />
+            </button>
+          </div>
+
+          <div className="rail-group-bottom">
+            <button
+              className="rail-btn rail-btn-settings"
+              onClick={() => setShowSearchModal(true)}
+              title="Quick Search & Settings (⌘K)"
+            >
+              <Settings size={18} />
+            </button>
+          </div>
+        </aside>
+
+        {/* Center Main Stage */}
+        <main className="desktop-workspace-canvas">
+          {children}
+        </main>
+      </div>
 
       {/* ── BOTTOM DESKTOP STATUS BAR (3D Bending Floating Panel) ── */}
       <Panel3D className="desktop-statusbar-panel3d" glow="white" maxAngle={2}>
@@ -275,14 +345,21 @@ export default function DesktopChrome({ children }) {
                 className="palette-result-item"
                 onClick={() => { setActiveNavSection('home'); setShowSearchModal(false); }}
               >
-                <span>Navigate to Intelligence Home Feed</span>
+                <span>Navigate to Global Intelligence Grid Dashboard</span>
                 <span className="palette-shortcut">↵</span>
               </div>
               <div
                 className="palette-result-item"
                 onClick={() => { setActiveNavSection('workspace'); setShowSearchModal(false); }}
               >
-                <span>Open Active Case Workspace (Case 102)</span>
+                <span>Open Active Case Workspace Canvas</span>
+                <span className="palette-shortcut">↵</span>
+              </div>
+              <div
+                className="palette-result-item"
+                onClick={() => { setShowTotalExplorer(true); setShowSearchModal(false); }}
+              >
+                <span>Open Windows File Explorer</span>
                 <span className="palette-shortcut">↵</span>
               </div>
               <div

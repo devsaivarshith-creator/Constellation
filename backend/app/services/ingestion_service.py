@@ -5,18 +5,21 @@ import hashlib
 from datetime import datetime, timezone
 from typing import List, Dict, Any, Optional
 import pymupdf as fitz
-import spacy
 from app.config import settings
 from app.services.graph_service import graph_service
 from app.services.er_service import er_service
 from app.services.audit_service import audit_service
 from app.db.sqlite_client import get_db_connection
 
-# Load spaCy NLP model
 try:
-    nlp = spacy.load(settings.SPACY_MODEL)
+    import spacy
+    try:
+        nlp = spacy.load(settings.SPACY_MODEL)
+    except Exception:
+        nlp = spacy.blank("en")
 except Exception:
-    nlp = spacy.blank("en")
+    spacy = None
+    nlp = None
 
 class IngestionService:
     """
@@ -130,23 +133,23 @@ class IngestionService:
             full_text += text + "\n"
             page_texts.append({"page": page_num + 1, "text": text})
 
-        # Step 3: Run spaCy NER
-        nlp_doc = nlp(full_text[:100000]) # Process up to 100k chars for speed
-        
+        # Step 3: Run spaCy NER if available
         extracted_persons = set()
         extracted_orgs = set()
         extracted_gpes = set()
 
-        for ent in nlp_doc.ents:
-            clean_text = ent.text.strip().replace("\n", " ")
-            if len(clean_text) < 3 or clean_text.isdigit():
-                continue
-            if ent.label_ == "PERSON":
-                extracted_persons.add(clean_text)
-            elif ent.label_ == "ORG":
-                extracted_orgs.add(clean_text)
-            elif ent.label_ in ("GPE", "LOC"):
-                extracted_gpes.add(clean_text)
+        if nlp:
+            nlp_doc = nlp(full_text[:100000]) # Process up to 100k chars for speed
+            for ent in nlp_doc.ents:
+                clean_text = ent.text.strip().replace("\n", " ")
+                if len(clean_text) < 3 or clean_text.isdigit():
+                    continue
+                if ent.label_ == "PERSON":
+                    extracted_persons.add(clean_text)
+                elif ent.label_ == "ORG":
+                    extracted_orgs.add(clean_text)
+                elif ent.label_ in ("GPE", "LOC"):
+                    extracted_gpes.add(clean_text)
 
         # Regex phone and email extraction
         phone_pattern = r'(\+?[1-9]\d{0,2}[-.\s]?)?(\(?\d{3}\)?[-.\s]?)?\d{3}[-.\s]?\d{4}'

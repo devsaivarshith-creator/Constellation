@@ -19,6 +19,9 @@ async def lifespan(app: FastAPI):
     create_initial_users()
     # 3. Connect to Graph (Neo4j with resilient fallback)
     await graph_client.connect()
+    # 4. Seed Canonical Intelligence (Case 102, 117, 143 entities & edges)
+    from app.db.seed_data import seed_canonical_intelligence
+    await seed_canonical_intelligence()
     
     yield
     

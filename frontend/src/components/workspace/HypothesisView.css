@@ -1,0 +1,246 @@
+.hypotheses-view-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  background: var(--bg-desktop);
+  overflow: hidden;
+}
+
+.hypotheses-toolbar {
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 14px;
+  background: var(--bg-window);
+  border-bottom: 1px solid var(--border-subtle);
+  flex-shrink: 0;
+}
+
+.toolbar-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.toolbar-title {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--text-primary);
+}
+
+.hyp-count-badge {
+  font-size: 10px;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--text-muted);
+  background: var(--bg-surface);
+  padding: 1px 5px;
+  border-radius: 3px;
+}
+
+/* ── Hypotheses Cards ────────────────────────────────────────── */
+.hypotheses-viewport {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+}
+
+.hypotheses-cards-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 980px;
+  margin: 0 auto;
+}
+
+.hypothesis-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-default);
+  border-left: 3px solid var(--accent-red);
+  border-radius: var(--card-radius);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: border-color 0.15s ease;
+}
+
+.hypothesis-card:hover {
+  border-color: var(--border-hover);
+  background: var(--bg-elevated);
+}
+
+.hyp-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.hyp-header-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.hyp-status-pill {
+  font-size: 9.5px;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 3px;
+}
+
+.status-active {
+  background: var(--accent-green-subtle);
+  color: var(--accent-green);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.status-challenged {
+  background: var(--accent-amber-subtle);
+  color: var(--accent-amber);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.confidence-meter-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.conf-label {
+  font-size: 9.5px;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.conf-bar-track {
+  width: 100px;
+  height: 5px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.conf-bar-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+.conf-pct {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.hyp-statement-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.35;
+}
+
+.hyp-rationale-text {
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.45;
+}
+
+/* Supporting & Contradicting Comparison Grid */
+.hyp-evidence-comparison-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  background: var(--bg-window);
+  border: 1px solid var(--border-subtle);
+  border-radius: 5px;
+  padding: 10px 12px;
+}
+
+.evidence-col {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.col-title {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
+.evidence-chips-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.evidence-chip {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  color: var(--text-secondary);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  padding: 3px 6px;
+  border-radius: 3px;
+}
+
+.chip-contra {
+  color: var(--accent-red);
+  background: var(--accent-red-subtle);
+  border-color: var(--accent-red-border);
+}
+
+.no-contra-text {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.hyp-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 4px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border-subtle);
+  font-size: 11px;
+}
+
+.hyp-author-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-muted);
+}
+
+.hyp-actions-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-challenge-action {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  font-weight: 700;
+  color: var(--accent-red);
+  background: var(--accent-red-subtle);
+  border: 1px solid var(--accent-red-border);
+  padding: 3px 10px;
+  border-radius: 4px;
+  transition: all 0.15s ease;
+}
+
+.btn-challenge-action:hover {
+  background: var(--accent-red);
+  color: #ffffff;
+}

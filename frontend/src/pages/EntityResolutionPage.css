@@ -1,0 +1,116 @@
+.er-matches {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.er-match-card {
+  padding: var(--space-xl) !important;
+}
+
+.er-match-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-lg);
+  flex-wrap: wrap;
+  gap: var(--space-md);
+}
+
+.er-comparison {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: var(--space-md);
+  margin-bottom: var(--space-lg);
+  align-items: stretch;
+}
+
+.er-entity-card {
+  padding: var(--space-md);
+  background: var(--bg-deep);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+}
+
+.er-entity-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-bottom: var(--space-md);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.er-entity-label code {
+  font-size: 0.625rem;
+  color: var(--text-muted);
+}
+
+.er-entity-props {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.er-prop {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  font-size: 0.8125rem;
+}
+.er-prop-key {
+  color: var(--text-muted);
+  text-transform: capitalize;
+  font-size: 0.75rem;
+}
+.er-prop-val {
+  font-weight: 500;
+  text-align: right;
+  word-break: break-word;
+}
+
+.er-vs {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  color: var(--text-muted);
+}
+
+.er-field-compare {
+  margin-bottom: var(--space-lg);
+  padding: var(--space-md);
+  background: var(--bg-deep);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+}
+.er-field-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  margin-bottom: 8px;
+}
+.er-field-name {
+  min-width: 100px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.er-actions {
+  display: flex;
+  gap: var(--space-md);
+  justify-content: flex-end;
+}
+
+@media (max-width: 768px) {
+  .er-comparison {
+    grid-template-columns: 1fr;
+  }
+  .er-vs {
+    flex-direction: row;
+    padding: var(--space-sm) 0;
+  }
+}

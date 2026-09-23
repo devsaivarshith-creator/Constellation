@@ -1,21 +1,54 @@
-MIT License
+Business Source License 1.1 (BUSL-1.1)
 
-Copyright (c) 2026 Yekeshwar Naik
+Parameters:
+Licensor:              Hundred-Trillion
+Author:                Adithya Srivatsa
+Licensed Work:         CONSTELLATION — Investigative Intelligence Platform
+Change Date:           None (Perpetual / No Change Date)
+Change License:        None (No After License)
+Additional Use Grant:  You may make non-commercial, personal evaluation, educational,
+                       and research use of the Licensed Work. You may not deploy or use
+                       the Licensed Work in commercial production environments or offer
+                       it as a hosted or managed service without an explicit commercial
+                       license agreement from the Licensor.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+Notice:
+Copyright (c) 2026 Hundred-Trillion. All rights reserved.
+Author: Adithya Srivatsa.
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+This repository and all included software, design assets, and source code belong
+exclusively to Hundred-Trillion and author Adithya Srivatsa.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+--------------------------------------------------------------------------------
+
+TERMS AND CONDITIONS
+
+1. Grant of License.
+Licensor hereby grants you the right to copy, modify, create derivative works,
+redistribute, and non-commercially use the Licensed Work in source code and
+binary form, subject to the terms and limitations specified herein.
+
+2. Ownership & Attribution.
+The Licensed Work belongs to Hundred-Trillion and author Adithya Srivatsa.
+All copies, forks, or substantial portions of the Licensed Work must retain this
+license notice and copyright attribution:
+"This repository belongs to Hundred-Trillion. Author: Adithya Srivatsa."
+
+3. Commercial Restrictions.
+Any commercial use, sublicensing, deployment in commercial production systems,
+or offering the Licensed Work as a software-as-a-service (SaaS) requires a valid,
+written commercial license executed with Hundred-Trillion.
+
+4. No After License (Perpetual BUSL).
+As specified in the Parameters above, this license does not transition to an open
+source after-license. The terms and conditions of this Business Source License
+remain in effect perpetually unless modified in writing by Hundred-Trillion.
+
+5. Disclaimer of Warranties.
+THE LICENSED WORK IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+COPYRIGHT HOLDERS (HUNDRED-TRILLION / ADITHYA SRIVATSA) BE LIABLE FOR ANY CLAIM,
+DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+DEALINGS IN THE SOFTWARE.

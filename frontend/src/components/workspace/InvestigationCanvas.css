@@ -1,0 +1,804 @@
+/* ═══════════════════════════════════════════════════════════════
+   INVESTIGATION CANVAS — High-End Minimalist Black & White Board
+   Interactive Roping & Bezier Curves + Node Pinboard
+   ═══════════════════════════════════════════════════════════════ */
+
+.canvas-workspace-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  background-color: #030303;
+}
+
+/* ── Top Command Bar ─────────────────────────────────────────── */
+.canvas-command-bar {
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 12px;
+  background: #080808;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  flex-shrink: 0;
+  z-index: 10;
+}
+
+.canvas-filter-chips {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.filter-chip {
+  padding: 3px 8px;
+  border-radius: 3px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: #888888;
+  background: transparent;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.12s ease;
+}
+
+.filter-chip:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.filter-chip.active {
+  background: #ffffff;
+  color: #000000;
+  font-weight: 700;
+  border-color: #ffffff;
+}
+
+.canvas-actions-cluster {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.quick-spawn-btn-group {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
+  padding: 1px 3px;
+}
+
+.spawn-btn {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  padding: 3px 6px;
+  background: transparent;
+  border: none;
+  font-size: 10px;
+  font-weight: 600;
+  color: #aaaaaa;
+  cursor: pointer;
+  border-radius: 3px;
+  transition: all 0.12s ease;
+}
+
+.spawn-btn:hover {
+  background: #ffffff;
+  color: #000000;
+}
+
+.canvas-connect-tool-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: #ffffff;
+  border-radius: 4px;
+  font-size: 10.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.12s ease;
+}
+
+.canvas-connect-tool-btn:hover,
+.canvas-connect-tool-btn.active {
+  background: #ffffff;
+  color: #000000;
+  border-color: #ffffff;
+}
+
+/* ── Inline Connection Builder Bar ─────────────────────────── */
+.inline-connect-bar {
+  background: #111111;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 6px 12px;
+  z-index: 15;
+  animation: slide-down 0.15s ease-out;
+}
+
+.connect-bar-inner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.connect-bar-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: 0.06em;
+}
+
+.connect-select {
+  background: #000000;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  font-size: 10.5px;
+  padding: 3px 6px;
+  border-radius: 3px;
+  outline: none;
+}
+
+.connect-arrow {
+  color: #ffffff;
+  font-size: 12px;
+}
+
+.connect-execute-btn {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  padding: 3px 8px;
+  background: #ffffff;
+  color: #000000;
+  border: none;
+  font-size: 10px;
+  font-weight: 700;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.connect-execute-btn:hover {
+  background: #e5e5e5;
+}
+
+.connect-cancel-btn {
+  background: transparent;
+  border: none;
+  color: #888888;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.connect-cancel-btn:hover {
+  color: #ffffff;
+}
+
+/* ── Roping Active Instruction Banner ────────────────────────── */
+.roping-instruction-strip {
+  background: #ffffff;
+  color: #000000;
+  padding: 6px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11px;
+  font-weight: 600;
+  z-index: 25;
+  animation: pulse-strip 2s infinite alternate;
+}
+
+.roping-pulse-glyph {
+  animation: spin-pulse 0.8s infinite alternate;
+}
+
+.roping-dismiss-btn {
+  background: #000000;
+  color: #ffffff;
+  border: none;
+  font-size: 9.5px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+/* ── Toast Confirmation Notification ─────────────────────────── */
+.canvas-toast-pill {
+  position: absolute;
+  top: 48px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #ffffff;
+  color: #000000;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 5px 12px;
+  border-radius: 20px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.9), 0 0 16px rgba(255, 255, 255, 0.4);
+  z-index: 100;
+  animation: toast-in 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ── Flash Highlight for Cards ───────────────────────────────── */
+.canvas-entity-card.flash-highlight {
+  border-color: #ffffff !important;
+  box-shadow: 0 0 0 2px #ffffff, 0 0 28px rgba(255, 255, 255, 0.85) !important;
+  animation: flash-pulse 0.8s ease-in-out infinite alternate;
+  z-index: 30 !important;
+}
+
+@keyframes flash-pulse {
+  from { transform: scale(1); }
+  to { transform: scale(1.03); }
+}
+
+@keyframes toast-in {
+  from { opacity: 0; transform: translate(-50%, -8px); }
+  to { opacity: 1; transform: translate(-50%, 0); }
+}
+
+@keyframes slide-down {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.roping-cancel-btn {
+  background: #000000;
+  color: #ffffff;
+  border: none;
+  font-size: 9px;
+  font-weight: 600;
+  padding: 1px 5px;
+  border-radius: 2px;
+  cursor: pointer;
+}
+
+/* ── Interactive Viewport ────────────────────────────────────── */
+.canvas-board-viewport {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  background-color: #020202;
+  background-image: 
+    radial-gradient(circle, rgba(255, 255, 255, 0.07) 1px, transparent 1px);
+  background-size: 20px 20px;
+  cursor: default;
+}
+
+.canvas-board-viewport.drag-over-active {
+  background-color: rgba(255, 255, 255, 0.03);
+  box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.35);
+}
+
+.canvas-drop-hint {
+  position: absolute;
+  inset: 20px;
+  border: 2px dashed rgba(255, 255, 255, 0.4);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: rgba(0, 0, 0, 0.7);
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  pointer-events: none;
+  z-index: 50;
+  backdrop-filter: blur(4px);
+}
+
+/* ── SVG Ropes Layer ─────────────────────────────────────────── */
+.canvas-ropes-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.rope-curve-group {
+  pointer-events: auto;
+}
+
+.rope-path {
+  transition: stroke 0.2s ease;
+}
+
+.rope-curve-group:hover .rope-path {
+  stroke-width: 2.5;
+  stroke: #ffffff;
+  filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.8));
+}
+
+.rope-foreign-object {
+  overflow: visible;
+  pointer-events: auto;
+}
+
+.rope-label-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: #080808;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.9);
+  padding: 2px 7px;
+  border-radius: 12px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  font-weight: 600;
+  color: #ffffff;
+  user-select: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.rope-label-pill:hover {
+  background: #141414;
+  border-color: #ffffff;
+  transform: scale(1.05);
+}
+
+.rope-text {
+  letter-spacing: 0.04em;
+}
+
+.rope-sever-btn {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1px;
+  border-radius: 2px;
+}
+
+.rope-sever-btn:hover {
+  color: #ff4d4f;
+  background: rgba(255, 77, 79, 0.15);
+}
+
+/* ── Interactive Draggable Node Card ─────────────────────────── */
+.canvas-entity-card {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 220px;
+  background: #0a0a0a;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 0 12px 28px -6px rgba(0, 0, 0, 0.85);
+  border-radius: 6px;
+  padding: 10px 12px;
+  user-select: none;
+  cursor: grab;
+  z-index: 5;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.canvas-entity-card:active {
+  cursor: grabbing;
+  box-shadow: 0 18px 36px -8px rgba(0, 0, 0, 0.95);
+  z-index: 20;
+}
+
+.canvas-entity-card:hover {
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.canvas-entity-card.selected {
+  border-color: #ffffff;
+  box-shadow: 0 0 0 1px #ffffff, 0 16px 36px -6px rgba(0, 0, 0, 0.95);
+  z-index: 15;
+}
+
+.canvas-entity-card.roping-source-node {
+  border-color: #ffffff;
+  box-shadow: 0 0 0 2px #ffffff, 0 0 20px rgba(255, 255, 255, 0.4);
+  animation: pulse-source 1.2s infinite;
+}
+
+.canvas-entity-card.roping-target-candidate {
+  border-color: rgba(255, 255, 255, 0.5);
+  cursor: crosshair;
+}
+
+.canvas-entity-card.roping-target-candidate:hover {
+  border-color: #ffffff;
+  background: #141414;
+  box-shadow: 0 0 0 2px #ffffff;
+}
+
+/* Card Rope Anchors */
+.card-rope-anchor {
+  position: absolute;
+  top: 50%;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #222222;
+  border: 2px solid #ffffff;
+  transform: translateY(-50%);
+  cursor: pointer;
+  z-index: 10;
+  transition: all 0.15s ease;
+  opacity: 0.5;
+}
+
+.canvas-entity-card:hover .card-rope-anchor {
+  opacity: 1;
+}
+
+.card-rope-anchor:hover {
+  background: #ffffff;
+  transform: translateY(-50%) scale(1.3);
+  box-shadow: 0 0 8px #ffffff;
+}
+
+.card-rope-anchor.anchor-left {
+  left: -5px;
+}
+
+.card-rope-anchor.anchor-right {
+  right: -5px;
+}
+
+.roping-target-hint {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(2px);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #38bdf8;
+  z-index: 25;
+  animation: pulse-source 1s infinite;
+  pointer-events: none;
+}
+
+.card-drag-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.card-type-tag {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: #999999;
+}
+
+.type-icon {
+  color: #ffffff;
+}
+
+.card-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.card-rope-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #cccccc;
+  border-radius: 3px;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.12s ease;
+}
+
+.card-rope-btn:hover, .card-rope-btn.active {
+  background: #ffffff;
+  color: #000000;
+  border-color: #ffffff;
+}
+
+.card-node-title {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #ffffff;
+  line-height: 1.25;
+  margin-bottom: 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.card-node-role {
+  font-size: 10.5px;
+  color: #888888;
+  line-height: 1.3;
+  margin-bottom: 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.card-node-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  padding-top: 6px;
+  font-size: 9.5px;
+}
+
+.threat-indicator {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+  font-size: 8.5px;
+  letter-spacing: 0.05em;
+  padding: 1px 5px;
+  border-radius: 2px;
+}
+
+.threat-critical {
+  background: #ffffff;
+  color: #000000;
+}
+
+.threat-high {
+  background: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.threat-medium {
+  background: rgba(255, 255, 255, 0.08);
+  color: #999999;
+}
+
+.threat-low {
+  background: transparent;
+  color: #666666;
+}
+
+.node-drag-grip {
+  color: rgba(255, 255, 255, 0.25);
+  display: flex;
+  align-items: center;
+}
+
+/* ── Relationship Preset Modal ───────────────────────────────── */
+.rope-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(3px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.rope-modal-dialog {
+  width: 320px;
+  background: #0d0d0d;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.95);
+  border-radius: 6px;
+  padding: 16px;
+}
+
+.rope-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.rope-modal-title {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #ffffff;
+}
+
+.rope-modal-close {
+  background: transparent;
+  border: none;
+  color: #888888;
+  cursor: pointer;
+}
+
+.rope-modal-close:hover {
+  color: #ffffff;
+}
+
+.rope-modal-desc {
+  font-size: 11.5px;
+  color: #aaaaaa;
+  line-height: 1.4;
+  margin-bottom: 12px;
+}
+
+.rope-modal-desc strong {
+  color: #ffffff;
+}
+
+.relationship-preset-chips {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.preset-rel-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  background: #141414;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  color: #cccccc;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.12s ease;
+}
+
+.preset-rel-btn:hover {
+  background: #ffffff;
+  color: #000000;
+  border-color: #ffffff;
+}
+
+@keyframes pulse-border {
+  0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4); }
+  70% { box-shadow: 0 0 0 6px rgba(255, 255, 255, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
+}
+
+@keyframes pulse-source {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+  100% { transform: scale(1); }
+}
+
+/* ── Double-Click Hint ── */
+.canvas-double-click-hint {
+  font-size: 10px;
+  color: #38bdf8;
+  background: rgba(56, 189, 248, 0.1);
+  border: 1px solid rgba(56, 189, 248, 0.25);
+  padding: 2px 7px;
+  border-radius: 4px;
+}
+
+/* ── Double-Tap Spawn Popover ── */
+.double-tap-spawn-popover {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 250px;
+  background: #0d0d0d;
+  border: 1px solid #38bdf8;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.95), 0 0 16px rgba(56, 189, 248, 0.35);
+  border-radius: 10px;
+  padding: 12px;
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.popover-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.popover-title-row {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.popover-icon {
+  color: #38bdf8;
+}
+
+.popover-title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: #ededed;
+}
+
+.popover-close-btn {
+  background: transparent;
+  border: none;
+  color: #71717a;
+  cursor: pointer;
+  padding: 1px;
+}
+
+.popover-close-btn:hover {
+  color: #ffffff;
+}
+
+.popover-form {
+  width: 100%;
+}
+
+.popover-input {
+  width: 100%;
+  height: 30px;
+  padding: 0 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 5px;
+  color: #ffffff;
+  font-size: 11.5px;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.popover-input:focus {
+  border-color: #38bdf8;
+}
+
+.popover-type-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px;
+}
+
+.popover-type-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 8px;
+  background: #181818;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 5px;
+  color: #ededed;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.12s ease;
+}
+
+.popover-type-btn:hover {
+  background: #ffffff;
+  color: #000000;
+  border-color: #ffffff;
+  transform: translateY(-1px);
+}

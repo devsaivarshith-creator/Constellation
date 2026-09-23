@@ -1,0 +1,297 @@
+/* ═══════════════════════════════════════════════════════════════
+   DOSSIER & EVIDENCE INSPECTOR (WINDOW 3) — Minimalist B&W
+   ═══════════════════════════════════════════════════════════════ */
+
+.dossier-inspector-root {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  background: #060606;
+  overflow: hidden;
+}
+
+.inspector-tabs-header {
+  height: 34px;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 0 8px;
+  background: #0a0a0a;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  flex-shrink: 0;
+}
+
+.insp-tab-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  background: transparent;
+  border: none;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: #777777;
+  cursor: pointer;
+  border-radius: 3px;
+  transition: all 0.12s ease;
+}
+
+.insp-tab-btn:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.insp-tab-btn.active {
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+}
+
+.inspector-tab-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px;
+}
+
+/* ── Dossier View ────────────────────────────────────────────── */
+.dossier-view {
+  height: 100%;
+}
+
+.dossier-hero-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.dossier-type-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 8.5px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #888888;
+}
+
+.dossier-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #ffffff;
+  margin-top: 1px;
+}
+
+.dossier-role-text {
+  font-size: 11px;
+  color: #a3a3a3;
+  margin-top: 2px;
+}
+
+.dossier-badges {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.threat-badge-pill {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 8.5px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 2px;
+}
+
+.threat-critical {
+  background: #ffffff;
+  color: #000000;
+}
+
+.threat-high {
+  background: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+}
+
+.threat-medium {
+  background: rgba(255, 255, 255, 0.08);
+  color: #aaaaaa;
+}
+
+.dossier-synopsis {
+  background: #0e0e0e;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
+  padding: 8px 10px;
+  margin-bottom: 10px;
+}
+
+.field-label {
+  font-size: 8.5px;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: #777777;
+  display: block;
+  margin-bottom: 3px;
+}
+
+.field-value {
+  font-size: 11.5px;
+  color: #d1d5db;
+  line-height: 1.4;
+}
+
+.dossier-attributes-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px;
+}
+
+.attr-item {
+  background: #0a0a0a;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 3px;
+  padding: 6px 8px;
+}
+
+.attr-k {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 8px;
+  font-weight: 700;
+  color: #666666;
+  letter-spacing: 0.05em;
+  display: block;
+}
+
+.attr-v {
+  font-size: 11px;
+  color: #e5e5e5;
+  margin-top: 2px;
+  display: block;
+}
+
+.text-highlight {
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.dossier-empty-state {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #666666;
+  font-size: 11px;
+  text-align: center;
+  padding: 20px;
+}
+
+.empty-icon {
+  opacity: 0.3;
+}
+
+/* ── Timeline View ───────────────────────────────────────────── */
+.timeline-items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.timeline-event-card {
+  background: #0b0b0b;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
+  padding: 8px 10px;
+  transition: border-color 0.12s ease;
+}
+
+.timeline-event-card:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.event-time-stamp {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.time-code {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.event-title-line {
+  font-size: 11.5px;
+  color: #ffffff;
+  margin-bottom: 3px;
+}
+
+.event-entity {
+  color: #aaaaaa;
+}
+
+.event-summary-text {
+  font-size: 11px;
+  color: #888888;
+  line-height: 1.35;
+  margin-bottom: 4px;
+}
+
+.event-location-text {
+  font-size: 9.5px;
+  color: #666666;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* ── Evidence View ───────────────────────────────────────────── */
+.evidence-cards-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.evidence-card-row {
+  background: #0b0b0b;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
+  padding: 8px 10px;
+}
+
+.evd-card-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+.evd-type-badge {
+  font-size: 8.5px;
+  font-family: 'JetBrains Mono', monospace;
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+  padding: 1px 5px;
+  border-radius: 2px;
+}
+
+.evd-hash-code {
+  font-size: 8.5px;
+  color: #666666;
+  margin-left: auto;
+}
+
+.evd-card-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #ffffff;
+  margin-bottom: 3px;
+}
+
+.evd-card-snippet {
+  font-size: 10.5px;
+  color: #888888;
+  line-height: 1.35;
+}

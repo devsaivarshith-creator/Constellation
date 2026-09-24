@@ -58,21 +58,21 @@ def get_user_by_username(username: str) -> Optional[dict]:
 def create_initial_users():
     """Seeds default accounts if the users table is empty."""
     default_users = [
-        ("admin", "admin123", "admin"),
-        ("investigator", "investigator123", "investigator"),
-        ("analyst", "analyst123", "read_only")
+        ("admin", "admin123", "admin", "System Administrator"),
+        ("investigator", "investigator123", "investigator", "Lead Intelligence Officer"),
+        ("analyst", "analyst123", "read_only", "Intelligence Analyst")
     ]
     conn = get_db_connection()
     cursor = conn.cursor()
-    for username, raw_pass, role in default_users:
+    for username, raw_pass, role, full_name in default_users:
         cursor.execute("SELECT id FROM users WHERE username = ?", (username,))
         if not cursor.fetchone():
             user_id = f"usr_{uuid.uuid4().hex[:10]}"
             now = datetime.now(timezone.utc).isoformat()
             hashed = get_password_hash(raw_pass)
             cursor.execute(
-                "INSERT INTO users (id, username, hashed_password, role, created_at) VALUES (?, ?, ?, ?, ?)",
-                (user_id, username, hashed, role, now)
+                "INSERT INTO users (id, username, hashed_password, full_name, role, created_at) VALUES (?, ?, ?, ?, ?, ?)",
+                (user_id, username, hashed, full_name, role, now)
             )
     conn.commit()
     conn.close()
@@ -85,6 +85,7 @@ async def get_current_user(credentials: Optional[HTTPAuthorizationCredentials] =
             id="usr_default_investigator",
             username="investigator",
             role="investigator",
+            full_name="Lead Intelligence Officer",
             created_at=datetime.now(timezone.utc).isoformat()
         )
 
@@ -96,7 +97,12 @@ async def get_current_user(credentials: Optional[HTTPAuthorizationCredentials] =
         user_id: str = payload.get("user_id")
         if username is None:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
-        return UserResponse(id=user_id, username=username, role=role, created_at="")
+        
+        # Fetch full user data
+        user_data = get_user_by_username(username)
+        full_name = user_data.get("full_name", username) if user_data else username
+        
+        return UserResponse(id=user_id, username=username, role=role, full_name=full_name, created_at="")
     except JWTError:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
 

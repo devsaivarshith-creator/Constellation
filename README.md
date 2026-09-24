@@ -1,86 +1,149 @@
-# Constellation — Investigative Intelligence Platform
+# 🌐 Constellation Intelligence Platform
 
-[![License: BUSL-1.1](https://img.shields.io/badge/License-BUSL--1.1-blue.svg)](LICENSE)
-[![Author: Adithya Srivatsa](https://img.shields.io/badge/Author-Adithya%20Srivatsa-orange.svg)](https://github.com/Hundred-Trillion)
-[![Organization: Hundred-Trillion](https://img.shields.io/badge/Org-Hundred--Trillion-purple.svg)](https://github.com/Hundred-Trillion)
+> Multi-agent, multi-layer investigative intelligence platform for law enforcement and intelligence analysts.
 
-**CONSTELLATION** is a next-generation investigative intelligence, graph correlation, and autonomous OSINT platform designed for multi-agency law enforcement, forensics, and corporate compliance investigations.
+**Author:** Adithya Srivatsa  
+**Organization:** Hundred-Trillion  
+**License:** BUSL-1.1 (Business Source License)
 
-Built with **honest epistemic provenance, zero hallucinations, sequential HMAC-SHA256 auditability**, and an **Apple + Windows 11 Fluent dark UI**.
+---
 
+## 🚀 Quick Start
+
+### Prerequisites
+- **Python 3.11+** (backend)
+- **Node.js 18+** (frontend)
+- **Neo4j 5** (optional — system works without it using embedded graph engine)
+
+### 1. Clone & Configure
+```bash
+git clone https://github.com/devsaivarshith-creator/Constellation.git
+cd Constellation
+cp .env.example .env
+# Edit .env to add your NVIDIA API key (optional) and customize settings
 ```
-RAW DATA → OBSERVATION → CORRELATION → ANALYTICAL INFERENCE → HYPOTHESIS
-```
 
----
-
-## Authorship & Legal Notice
-
-* **Author**: **Adithya Srivatsa**
-* **Repository Owner**: **Hundred-Trillion**
-* **License**: Business Source License 1.1 (BUSL-1.1, Perpetual / No After License). See [LICENSE](LICENSE) for full legal terms.
-
----
-
-## Core Capabilities
-
-### 1. Interactive Multi-Agent Workspace
-* **Investigation Canvas**: Fluid 60fps card dragging and anchor-based roping connections between suspects, corporate shells, vessels, and financial conduits.
-* **Double-Tap / Double-Click Node Creation**: Double-clicking anywhere on the canvas background opens an instant spawn popover at cursor coordinates (`+ Person`, `+ Org`, `+ Vessel`, `+ Hawala`, `+ Evidence`).
-* **Workspaces Overview Hub**: Clean management view displaying active workspace counts, case search, and 1-click workspace switching.
-* **Dedicated Case File Adder**: Left-side drawer dock with 1-click mounting of case files, dossiers, and exhibits directly onto the board.
-
-### 2. Windows 11 Style File Explorer
-* **Right-Click Context Menu**:
-  * Right-click empty canvas: `📁 New folder` (with inline renaming), `📄 New Document`, `🔄 Refresh`, `🔀 Sort by`, `👁️ View`, `⚙️ Properties`.
-  * Right-click item: `📌 Pin to Workspace Canvas`, `👁️ Open`, `✏️ Rename`, `📋 Copy`, `🗑️ Delete`, `⚙️ Properties`.
-* **Organized Folder Hierarchy**:
-  * 📁 `Active Investigations`: Live operations (*Case 102 Silver Dune, Case 117 Operation Black Tide, Case 143 Red Sand Syndicate, Case 121 Vault Breach, Case 135 Extortion, Case 155 Sanctions, Case 168 Darknet*).
-  * 📁 `Cases Done (Closed & Convicted)`: Solved archives (*Case 108 Waterfront Hit, Case 094 Kandla Bribery, Case 081 Nariman Shell Wire, Case 062 Hawala Golden Falcon*).
-* **Properties Dialog**: Inspect file locations, MIME types, creation dates, and cryptographic SHA-256 integrity checksums.
-
-### 3. Byomkesh Autonomous Reasoning Engine
-* Autonomous 12-hour background sweeps identifying cross-case Hawala nexus, maritime sanctions evasion, and biometric breach anomalies.
-* Strict hallucination prevention with mandatory citation validation.
-
-### 4. Cryptographic Provenance & Evidence Ledger
-* Sequential HMAC-SHA256 hash-chain write audit log with tamper-evident chain-of-custody verification.
-* Multi-tier epistemic separation adhering to Section 63 of the Bharatiya Nagarik Suraksha Sanhita (BNSS) 2023.
-
----
-
-## Architecture & Technology Stack
-
-| Layer | Technology | Purpose |
-|---|---|---|
-| **Frontend** | React 19, Vite, Lucide Icons, Vanilla CSS | Windows 11 Fluent + Apple Minimalist dark design system |
-| **Backend** | Python 3.12, FastAPI, PyMuPDF, spaCy | High-performance async REST API & ingestion services |
-| **Graph Database** | Neo4j 5 Community + Embedded Resilience Engine | Property graph with typed, confidence-weighted relationships |
-| **Entity Resolution** | Splink 4 / Fellegi-Sunter Model (DuckDB Backend) | Probabilistic record linkage, match candidate queue |
-| **Evidence Ledger** | Sequential HMAC-SHA256 Hash Chain (SQLite) | Tamper-evident write audit log with sequence verification |
-
----
-
-## Quickstart
-
-### 1. Backend Service
-```powershell
+### 2. Start Backend
+```bash
 cd backend
-python -m uvicorn app.main:app --host 127.0.0.1 --port 8000
+pip install -r requirements.txt
+python -m spacy download en_core_web_sm  # For NER (optional)
+python -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 ```
-*API documentation available at `http://127.0.0.1:8000/docs`*
 
-### 2. Frontend Application
-```powershell
+### 3. Start Frontend
+```bash
 cd frontend
 npm install
 npm run dev
 ```
-*Open `http://localhost:5173` in your browser.*
+
+### 4. (Optional) Start Neo4j
+```bash
+docker compose up -d
+```
 
 ---
 
-## License
+## 🏗️ Architecture
 
-This software is licensed under the **Business Source License 1.1 (BUSL-1.1)** with no transition after-license.  
-All intellectual property and repository rights belong to **Hundred-Trillion** and author **Adithya Srivatsa**.
+```
+┌─────────────────────────────────────────────────────────┐
+│                    Frontend (React/Vite)                  │
+│  ┌──────────┐ ┌────────────┐ ┌──────────┐ ┌──────────┐ │
+│  │ Dashboard │ │ Workspace  │ │ Intel    │ │ Audit    │ │
+│  │ (Home)   │ │ (Canvas)   │ │ Feed     │ │ Ledger   │ │
+│  └──────────┘ └────────────┘ └──────────┘ └──────────┘ │
+│                        ▼                                 │
+│              API Service (api.js)                        │
+│              JWT Token Management                        │
+└──────────────────────┬──────────────────────────────────┘
+                       │ HTTP/REST
+┌──────────────────────┴──────────────────────────────────┐
+│               Backend (FastAPI / Python)                  │
+│                                                          │
+│  ┌─────────────────────────────────────────────────┐    │
+│  │              API Routers (14 modules)             │    │
+│  │  auth · cases · entities · relationships         │    │
+│  │  ingestion · entity-resolution · evidence        │    │
+│  │  byomkesh · audit · home · hypotheses            │    │
+│  │  sweep · workspaces · notifications              │    │
+│  └─────────────────────┬───────────────────────────┘    │
+│                        ▼                                 │
+│  ┌─────────────────────────────────────────────────┐    │
+│  │              Services Layer (7 engines)           │    │
+│  │  GraphService · AuditService · ByomkeshAgent     │    │
+│  │  IngestionService · ERService · SweepService     │    │
+│  │  AutonomousResearchService                        │    │
+│  └─────────────────────┬───────────────────────────┘    │
+│                        ▼                                 │
+│  ┌──────────────────┐  ┌──────────────────────────┐    │
+│  │   Neo4j (Graph)   │  │   SQLite (Relational)     │    │
+│  │   Knowledge Graph │  │   Users · Audit · ER      │    │
+│  │   w/ Fallback     │  │   Evidence · Workspaces   │    │
+│  └──────────────────┘  └──────────────────────────┘    │
+└─────────────────────────────────────────────────────────┘
+```
+
+## 🔑 API Endpoints
+
+| Category | Method | Endpoint | Description |
+|----------|--------|----------|-------------|
+| **Auth** | POST | `/api/auth/register` | Register new account |
+| **Auth** | POST | `/api/auth/login` | Login & get JWT token |
+| **Auth** | GET | `/api/auth/me` | Get current user profile |
+| **Cases** | GET/POST | `/api/cases` | List/create investigation cases |
+| **Cases** | GET | `/api/cases/{id}/subgraph` | Get case knowledge graph |
+| **Entities** | GET/POST | `/api/entities` | List/create graph entities |
+| **Relationships** | POST | `/api/relationships` | Create typed relationships |
+| **Ingestion** | POST | `/api/ingestion/upload-pdf` | Upload & parse PDF with NER |
+| **Ingestion** | POST | `/api/ingestion/upload-csv` | Ingest structured call logs |
+| **Ingestion** | POST | `/api/ingestion/upload-media` | Upload photos/audio/video |
+| **Entity Resolution** | GET | `/api/entity-resolution/matches` | Get pending ER matches |
+| **Entity Resolution** | POST | `/api/entity-resolution/matches/{id}/resolve` | Confirm/reject match |
+| **Evidence** | GET | `/api/evidence` | List evidence items |
+| **Byomkesh** | POST | `/api/byomkesh/query` | Query the AI investigation agent |
+| **Hypotheses** | GET/POST | `/api/hypotheses` | Manage investigation hypotheses |
+| **Hypotheses** | POST | `/api/hypotheses/{id}/challenge` | Challenge AI hypothesis |
+| **Hypotheses** | POST | `/api/hypotheses/auto-research` | Run autonomous research |
+| **Sweep** | GET/POST | `/api/sweep/latest` | 12-hour cross-case sweep |
+| **Audit** | GET | `/api/audit/verify` | Verify HMAC hash-chain integrity |
+| **Audit** | GET | `/api/audit/recent` | Recent audit events |
+| **Workspaces** | CRUD | `/api/workspaces` | Manage investigation workspaces |
+| **Notifications** | GET/POST | `/api/notifications` | User notifications |
+| **Health** | GET | `/api/health` | System health check |
+
+## 🔒 Security Features
+
+- **JWT Authentication** — PBKDF2-HMAC-SHA256 password hashing with 100K iterations
+- **HMAC Hash-Chain Audit Ledger** — Tamper-evident cryptographic chain for every write operation
+- **Role-Based Access Control** — Admin, Investigator, Read-Only roles
+- **Evidence Integrity** — SHA-256 hashing of all ingested evidence files
+- **Legal Basis Enforcement** — Cases require legal justification before creation
+
+## 🤖 AI / Intelligence Features
+
+- **Byomkesh Agent** — LangGraph-based investigative query engine with mandatory citations
+- **Autonomous Research** — Bounded multi-step investigation with hypothesis generation
+- **Entity Resolution** — Probabilistic Fellegi-Sunter matching with human-in-the-loop confirmation
+- **12-Hour Sweep Engine** — Cross-case pattern detection and contradiction analysis
+- **NER Ingestion Pipeline** — spaCy-powered named entity extraction from documents
+
+## ⚙️ Configuration
+
+All configuration is managed via the `.env` file. Key settings:
+
+| Variable | Description | Required |
+|----------|-------------|----------|
+| `NVIDIA_API_KEY` | NVIDIA NIM API key for LLM | Optional |
+| `NEO4J_URI` | Neo4j bolt connection | Optional |
+| `JWT_SECRET_KEY` | JWT signing secret | Yes |
+| `HMAC_SECRET_KEY` | Audit ledger HMAC key | Yes |
+
+## 📝 Default Credentials
+
+| Username | Password | Role |
+|----------|----------|------|
+| `admin` | `admin123` | Admin |
+| `investigator` | `investigator123` | Investigator |
+| `analyst` | `analyst123` | Read-Only |

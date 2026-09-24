@@ -24,7 +24,7 @@ async def seed_canonical_intelligence():
                     "title": "Case 102 — Silver Dune",
                     "description": "Cross-border maritime narcotics & hawala syndicate spanning Arabian Sea corridors into Gujarat and Mumbai.",
                     "legal_basis": "PMLA Sec 3/4 & NDPS Act Sec 21/29",
-                    "status": "ACTIVE"
+                    "status": "active"
                 }
             },
             {
@@ -35,7 +35,7 @@ async def seed_canonical_intelligence():
                     "title": "Case 117 — Operation Black Tide",
                     "description": "Inter-state maritime trafficking nexus with deep sea transshipment points.",
                     "legal_basis": "NDPS Act Sec 21/29 & UAPA Sec 15",
-                    "status": "ACTIVE"
+                    "status": "active"
                 }
             },
             {
@@ -46,7 +46,7 @@ async def seed_canonical_intelligence():
                     "title": "Case 143 — Red Sand Syndicate",
                     "description": "Smuggling & illicit financial settlement network operating via maritime brokers.",
                     "legal_basis": "IPC Sec 370 / Passports Act",
-                    "status": "ACTIVE"
+                    "status": "active"
                 }
             }
         ]

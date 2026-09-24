@@ -7,6 +7,7 @@ class UserBase(BaseModel):
 
 class UserCreate(UserBase):
     password: str = Field(..., min_length=6)
+    full_name: Optional[str] = ""
 
 class UserLogin(BaseModel):
     username: str
@@ -14,6 +15,7 @@ class UserLogin(BaseModel):
 
 class UserResponse(UserBase):
     id: str
+    full_name: Optional[str] = ""
     created_at: str
 
 class Token(BaseModel):

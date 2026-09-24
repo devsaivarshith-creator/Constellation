@@ -1,13 +1,14 @@
 import os
 from pathlib import Path
 from pydantic_settings import BaseSettings
+from typing import List
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 class Settings(BaseSettings):
     # App
     APP_NAME: str = "Constellation Intelligence Platform"
-    APP_VERSION: str = "1.0.0-phase1"
+    APP_VERSION: str = "1.0.0"
     DEBUG: bool = True
     
     # Neo4j Graph Database
@@ -36,6 +37,13 @@ class Settings(BaseSettings):
     
     # Ingestion / NER
     SPACY_MODEL: str = "en_core_web_sm"
+
+    # CORS
+    CORS_ORIGINS: str = "http://localhost:5173,http://localhost:3000,http://127.0.0.1:5173"
+
+    @property
+    def cors_origins_list(self) -> List[str]:
+        return [o.strip() for o in self.CORS_ORIGINS.split(",") if o.strip()]
 
     class Config:
         env_file = str(BASE_DIR / ".env")

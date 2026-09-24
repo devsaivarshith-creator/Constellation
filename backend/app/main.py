@@ -1,5 +1,7 @@
+import time
+import logging
 from contextlib import asynccontextmanager
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from app.config import settings
 from app.db.sqlite_client import init_sqlite_db
@@ -10,41 +12,74 @@ from app.routers import (
     ingestion, entity_resolution, evidence, byomkesh, audit,
     home, hypotheses, sweep
 )
+from app.routers import workspaces, notifications
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO if not settings.DEBUG else logging.DEBUG,
+    format="%(asctime)s | %(name)-30s | %(levelname)-7s | %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S"
+)
+logger = logging.getLogger("constellation")
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # 1. Initialize SQLite tables (users, audit ledger, ER matches, evidence)
+    logger.info(f"Starting {settings.APP_NAME} v{settings.APP_VERSION}")
+
+    # 1. Initialize SQLite tables (users, audit ledger, ER matches, evidence, workspaces, notifications)
     init_sqlite_db()
+    logger.info("SQLite database initialized")
+
     # 2. Seed initial users (admin, investigator, analyst)
     create_initial_users()
+    logger.info("Default users seeded")
+
     # 3. Connect to Graph (Neo4j with resilient fallback)
     await graph_client.connect()
+    logger.info(f"Graph engine: {'Neo4j' if graph_client.is_connected else 'Embedded Resilience Engine'}")
+
     # 4. Seed Canonical Intelligence (Case 102, 117, 143 entities & edges)
     from app.db.seed_data import seed_canonical_intelligence
     await seed_canonical_intelligence()
+    logger.info("Canonical intelligence seeded")
+
+    logger.info(f"Backend ready at http://0.0.0.0:8000")
+    logger.info(f"API docs at http://localhost:8000/docs")
     
     yield
     
     # Graceful shutdown
     await graph_client.close()
+    logger.info("Backend shutdown complete")
 
 app = FastAPI(
     title=settings.APP_NAME,
     version=settings.APP_VERSION,
-    description="Multi-agent, multi-layer investigative intelligence platform (Phase 1 MVP)",
+    description="Multi-agent, multi-layer investigative intelligence platform",
     lifespan=lifespan
 )
 
-# CORS configuration for frontend development
+# ---- Production Middleware ----
+
+# CORS configuration (env-configurable)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=settings.cors_origins_list if not settings.DEBUG else ["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Include API Routers
+# Request logging middleware
+@app.middleware("http")
+async def log_requests(request: Request, call_next):
+    start_time = time.time()
+    response = await call_next(request)
+    elapsed = round((time.time() - start_time) * 1000, 2)
+    logger.info(f"{request.method} {request.url.path} → {response.status_code} ({elapsed}ms)")
+    return response
+
+# ---- API Routers ----
 app.include_router(auth.router, prefix="/api")
 app.include_router(cases.router, prefix="/api")
 app.include_router(entities.router, prefix="/api")
@@ -57,6 +92,8 @@ app.include_router(audit.router, prefix="/api")
 app.include_router(home.router, prefix="/api")
 app.include_router(hypotheses.router, prefix="/api")
 app.include_router(sweep.router, prefix="/api")
+app.include_router(workspaces.router, prefix="/api")
+app.include_router(notifications.router, prefix="/api")
 
 @app.get("/api/health")
 async def health_check():
@@ -64,7 +101,8 @@ async def health_check():
         "status": "healthy",
         "app": settings.APP_NAME,
         "version": settings.APP_VERSION,
-        "graph_backend": "Neo4j" if graph_client.is_connected else "Embedded Resilience Engine"
+        "graph_backend": "Neo4j" if graph_client.is_connected else "Embedded Resilience Engine",
+        "llm_configured": bool(settings.NVIDIA_API_KEY)
     }
 
 if __name__ == "__main__":

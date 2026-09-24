@@ -22,6 +22,7 @@ def init_sqlite_db():
         id TEXT PRIMARY KEY,
         username TEXT UNIQUE NOT NULL,
         hashed_password TEXT NOT NULL,
+        full_name TEXT DEFAULT '',
         role TEXT NOT NULL CHECK(role IN ('admin', 'investigator', 'read_only')),
         created_at TEXT NOT NULL
     )
@@ -75,6 +76,40 @@ def init_sqlite_db():
         metadata_json TEXT
     )
     """)
+
+    # Workspaces — persisted investigation workspaces
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS workspaces (
+        id TEXT PRIMARY KEY,
+        name TEXT NOT NULL,
+        case_id TEXT,
+        description TEXT DEFAULT '',
+        canvas_state TEXT DEFAULT '{}',
+        created_by TEXT NOT NULL,
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL
+    )
+    """)
+
+    # Notifications — persistent notification store
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS notifications (
+        id TEXT PRIMARY KEY,
+        user_id TEXT NOT NULL,
+        title TEXT NOT NULL,
+        body TEXT DEFAULT '',
+        notification_type TEXT DEFAULT 'info',
+        is_read INTEGER DEFAULT 0,
+        link TEXT DEFAULT '',
+        created_at TEXT NOT NULL
+    )
+    """)
+
+    # Try to add full_name column if missing (migration-safe)
+    try:
+        cursor.execute("ALTER TABLE users ADD COLUMN full_name TEXT DEFAULT ''")
+    except Exception:
+        pass  # Column already exists
 
     conn.commit()
     conn.close()

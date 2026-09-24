@@ -10,6 +10,7 @@ import {
   Layers, ArrowLeft, Plus, Database, Sidebar,
   Activity, CheckCircle2, Shield, RefreshCw, X, Brain, Sparkles
 } from 'lucide-react';
+import api from '../services/api';
 import './InvestigationWorkspace.css';
 
 export default function InvestigationWorkspace() {
@@ -30,10 +31,13 @@ export default function InvestigationWorkspace() {
 
   // Verify backend health
   useEffect(() => {
-    fetch('http://127.0.0.1:8000/api/health')
-      .then(res => res.json())
+    api.healthCheck()
       .then(data => {
-        if (data.status === 'healthy') setBackendStatus('live');
+        if (data.status === 'healthy') {
+          setBackendStatus('live');
+        } else {
+          setBackendStatus('offline');
+        }
       })
       .catch(() => setBackendStatus('offline'));
   }, []);

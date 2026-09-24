@@ -33,6 +33,8 @@ env/
 ENV/
 env.bak/
 venv.bak/
+.venv/
+*.zip
 
 # Database and store files
 *.db

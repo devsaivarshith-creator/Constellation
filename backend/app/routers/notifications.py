@@ -28,13 +28,13 @@ async def list_notifications(
     cursor = conn.cursor()
     if unread_only:
         cursor.execute(
-            "SELECT * FROM notifications WHERE user_id = ? AND is_read = 0 ORDER BY created_at DESC LIMIT 50",
-            (current_user.id,)
+            "SELECT * FROM notifications WHERE (user_id = ? OR user_id = ? OR user_id = 'all') AND is_read = 0 ORDER BY created_at DESC LIMIT 50",
+            (current_user.id, current_user.username)
         )
     else:
         cursor.execute(
-            "SELECT * FROM notifications WHERE user_id = ? ORDER BY created_at DESC LIMIT 50",
-            (current_user.id,)
+            "SELECT * FROM notifications WHERE user_id = ? OR user_id = ? OR user_id = 'all' ORDER BY created_at DESC LIMIT 50",
+            (current_user.id, current_user.username)
         )
     rows = cursor.fetchall()
     conn.close()

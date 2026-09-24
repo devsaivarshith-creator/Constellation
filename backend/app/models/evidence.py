@@ -4,7 +4,7 @@ from pydantic import BaseModel, Field
 class EvidenceBase(BaseModel):
     case_id: str
     title: str
-    evidence_type: str = Field("document", pattern="^(document|photo|video|audio|digital)$")
+    evidence_type: str = Field("document", pattern="^(document|photo|video|audio|digital|call_log|financial|forensic)$")
     description: Optional[str] = ""
     collected_at: Optional[str] = None
     collected_by: Optional[str] = None

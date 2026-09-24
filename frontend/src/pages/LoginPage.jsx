@@ -3,16 +3,16 @@ import { useAuth } from '../contexts/AuthContext';
 import './LoginPage.css';
 
 export default function LoginPage() {
-  const { login, register, error } = useAuth();
+  const { login, register, demoLogin, error } = useAuth();
   const [isRegister, setIsRegister] = useState(false);
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState('investigator');
+  const [password, setPassword] = useState('investigator123');
   const [fullName, setFullName] = useState('');
   const [localError, setLocalError] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    if (e) e.preventDefault();
     setLocalError('');
     setLoading(true);
 
@@ -24,6 +24,17 @@ export default function LoginPage() {
       }
     } catch (err) {
       setLocalError(err.detail || err.message || 'Authentication failed');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleQuickDemo = (role = 'investigator') => {
+    setLoading(true);
+    try {
+      demoLogin(role);
+    } catch (err) {
+      setLocalError('Failed to initialize demo session');
     } finally {
       setLoading(false);
     }
@@ -114,6 +125,33 @@ export default function LoginPage() {
             )}
           </button>
 
+          {!isRegister && (
+            <button
+              type="button"
+              className="login-quick-btn"
+              onClick={() => handleQuickDemo('investigator')}
+              style={{
+                marginTop: '10px',
+                width: '100%',
+                padding: '10px 14px',
+                background: 'rgba(96, 165, 250, 0.1)',
+                border: '1px solid rgba(96, 165, 250, 0.3)',
+                borderRadius: '8px',
+                color: '#93c5fd',
+                fontSize: '13px',
+                fontWeight: 600,
+                cursor: 'pointer',
+                transition: 'all 0.2s ease',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px'
+              }}
+            >
+              <span>⚡ Quick Launch — Lead Investigator</span>
+            </button>
+          )}
+
           <div className="login-toggle">
             {isRegister ? (
               <span>Already have an account? <button type="button" onClick={() => { setIsRegister(false); setLocalError(''); }}>Sign In</button></span>
@@ -124,8 +162,30 @@ export default function LoginPage() {
 
           {!isRegister && (
             <div className="login-defaults">
-              <p>Default credentials:</p>
-              <code>investigator / investigator123</code>
+              <p>Quick personas:</p>
+              <div style={{ display: 'flex', gap: '6px', justifyContent: 'center', marginTop: '6px' }}>
+                <button
+                  type="button"
+                  onClick={() => { setUsername('investigator'); setPassword('investigator123'); }}
+                  style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', color: '#e2e8f0', borderRadius: '4px', padding: '3px 8px', fontSize: '11px', cursor: 'pointer' }}
+                >
+                  Investigator
+                </button>
+                <button
+                  type="button"
+                  onClick={() => { setUsername('admin'); setPassword('admin123'); }}
+                  style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', color: '#e2e8f0', borderRadius: '4px', padding: '3px 8px', fontSize: '11px', cursor: 'pointer' }}
+                >
+                  Admin
+                </button>
+                <button
+                  type="button"
+                  onClick={() => { setUsername('analyst'); setPassword('analyst123'); }}
+                  style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', color: '#e2e8f0', borderRadius: '4px', padding: '3px 8px', fontSize: '11px', cursor: 'pointer' }}
+                >
+                  Analyst
+                </button>
+              </div>
             </div>
           )}
         </form>

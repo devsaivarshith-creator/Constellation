@@ -2,46 +2,42 @@
 
 > Multi-agent, multi-layer investigative intelligence platform for law enforcement and intelligence analysts.
 
-**Author:** Adithya Srivatsa  
-**Organization:** Hundred-Trillion  
-**License:** BUSL-1.1 (Business Source License)
+[![Live on Netlify](https://img.shields.io/badge/Netlify-LIVE%20PREVIEW-00C7B7?style=flat-square&logo=netlify)](https://constellation-intel.netlify.app)
+[![FastAPI](https://img.shields.io/badge/Backend-FastAPI-009688?style=flat-square&logo=fastapi)](http://127.0.0.1:8000/docs)
+[![Python 3.11+](https://img.shields.io/badge/Python-3.11%2B-blue?style=flat-square&logo=python)](https://python.org)
+[![React 19](https://img.shields.io/badge/Frontend-React%2019%20+%20Vite-61DAFB?style=flat-square&logo=react)](https://vitejs.dev)
+
+- **Live Cloud Frontend**: **[https://constellation-intel.netlify.app](https://constellation-intel.netlify.app)**
+- **Architecture Documentation**: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
+- **API Reference**: [docs/API_REFERENCE.md](docs/API_REFERENCE.md)
+- **Developer Guide**: [docs/DEVELOPER_GUIDE.md](docs/DEVELOPER_GUIDE.md)
 
 ---
 
-## 🚀 Quick Start
+## 🚀 Quick Start (Under 60 Seconds)
 
-### Prerequisites
-- **Python 3.11+** (backend)
-- **Node.js 18+** (frontend)
-- **Neo4j 5** (optional — system works without it using embedded graph engine)
-
-### 1. Clone & Configure
+Launch both Backend and Frontend with a single command:
 ```bash
-git clone https://github.com/devsaivarshith-creator/Constellation.git
-cd Constellation
-cp .env.example .env
-# Edit .env to add your NVIDIA API key (optional) and customize settings
+./start.sh
 ```
 
-### 2. Start Backend
-```bash
-cd backend
-pip install -r requirements.txt
-python -m spacy download en_core_web_sm  # For NER (optional)
-python -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
-```
+- **Frontend**: [http://localhost:5173](http://localhost:5173)
+- **Backend API**: [http://127.0.0.1:8000/api](http://127.0.0.1:8000/api)
+- **Interactive API Docs**: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
 
-### 3. Start Frontend
-```bash
-cd frontend
-npm install
-npm run dev
-```
-
-### 4. (Optional) Start Neo4j
-```bash
-docker compose up -d
-```
+### Manual Setup
+1. **Configure Environment:**
+   ```bash
+   cp .env.example .env
+   ```
+2. **Start Backend:**
+   ```bash
+   ./backend/run.sh
+   ```
+3. **Start Frontend:**
+   ```bash
+   cd frontend && npm install && npm run dev
+   ```
 
 ---
 
